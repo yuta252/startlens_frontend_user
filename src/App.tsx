@@ -1,58 +1,60 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import React, { useEffect } from 'react';
+import Container from '@material-ui/core/Container';
+import { makeStyles } from "@material-ui/core/styles";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
-  );
+import { fetchAsyncGetSpots } from './features/user/spot/spotSlice';
+
+import { AppDispatch } from './app/store';
+import Router from './routes/Router';
+import { useLocation } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+
+import UserHeader from './components/user/Header/Header';
+import UserFooter from './components/user/Footer/Footer';
+
+
+const useStyles = makeStyles( (theme) => ({
+    root: {
+        display: 'flex'
+    },
+    appBarSpacer: theme.mixins.toolbar,
+    content: {
+        flexGlow: 1,
+        height: '100vh',
+        overflow: 'auto',
+    },
+    container: {
+        padding: theme.spacing(4),
+    }
+}));
+
+const App: React.FC = () => {
+    const dispatch: AppDispatch = useDispatch();
+    const location = useLocation();
+    const isDisplayedAdmin: Boolean = !(location.pathname === '/admin/signin' || location.pathname === '/admin/signup');
+    const isDisplayedUser: Boolean = !(location.pathname === '/signin' || location.pathname === '/signup');
+    const isAdminPath: Boolean = /^\/admin\//.test(location.pathname)
+    const classes = useStyles();
+
+    useEffect( () => {
+        const fetchBootLoader = async () => {
+            await dispatch(fetchAsyncGetSpots({items: 3}))
+        };
+        fetchBootLoader();
+    }, [dispatch]);
+
+    return (
+        <div className={classes.root}>
+            {!isAdminPath && isDisplayedUser && <UserHeader />}
+            <main className={classes.content}>
+                { isDisplayedAdmin && isDisplayedUser &&  <div className={classes.appBarSpacer} /> }
+                <Container maxWidth={false} className={classes.container} >
+                    <Router />
+                </Container>
+            </main>
+        </div>
+    );
 }
 
 export default App;
+
