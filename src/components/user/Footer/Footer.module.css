@@ -1,0 +1,14 @@
+.footer_wrapper {
+    background-color: #ff9800;
+    margin-top: 48px;
+}
+
+.footer_list_item {
+    list-style: none;
+    margin: 8px 0px;
+    padding-left: 12px;
+}
+
+.footer_copyright_wrapper {
+    margin-top: 32px;
+}

@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
+
+/******* Module Spacer *********/
+.divider__small {
+    height: 20px;
+    width: 100%;
+    border-top: 2px solid #eeeeee;
+    margin-top: 20px;
+}
+
+.spacer__small {
+    height: 20px;
+}
+
+.spacer__medium {
+    height: 32px;
+}
