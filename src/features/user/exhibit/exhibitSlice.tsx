@@ -90,5 +90,6 @@ export const { selectExhibit } = exhibitSlice.actions;
 
 export const selectError = (state: RootState) => state.exhibit.error;
 export const selectExhibits = (state: RootState) => state.exhibit.exhibits;
+export const selectSelectedExhibit = (state: RootState) => state.exhibit.selectExhibit;
 
 export default exhibitSlice.reducer;

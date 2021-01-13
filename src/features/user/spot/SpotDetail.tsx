@@ -33,9 +33,6 @@ import { READ_EXHIBIT } from '../../types';
 
 
 const useStyles = makeStyles((theme: Theme) => ({
-    root: {
-        padding: theme.spacing(4)
-    },
     paper: {
         margin: theme.spacing(4, 0),
         padding: theme.spacing(4)
