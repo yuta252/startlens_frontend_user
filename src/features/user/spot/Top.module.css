@@ -58,3 +58,31 @@
 .search_result_wrapper {
     width: 100%;
 }
+
+.complex_search_wrapper {
+    padding: 24px 0px;
+    display: flex;
+}
+
+.search_pagination_wrapper {
+    margin: 24px 0;
+    width: 100%;
+    text-align: center;
+}
+
+.spot_detail_subtitle_wrapper {
+    margin-top: 12px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.spot_detail_avatar_wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.spot_detail_divider {
+    margin: 16px 0px;
+    border: 1px solid #eeeeee;
+}

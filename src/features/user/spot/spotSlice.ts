@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from "axios";
+import { truncate } from 'fs';
 
 import { RootState } from '../../../app/store';
 import {
@@ -15,17 +16,17 @@ export const fetchAsyncGetSpots = createAsyncThunk(
     "spot/getSpots",
     async (params: SPOT_GET_PARAMS) => {
         let requestUrl = process.env.REACT_APP_API_URL + "/api/v1/tourist/spots"
+        let isQuestion = true;
 
         Object.keys(params).map( (param, index) => {
-            if (index === 0) {
-                requestUrl += "?"
-            }else{
-                requestUrl += "&"
+            if(params[param] && isQuestion) {
+                // if match the condition and at only once, add ? as prefix search query
+                requestUrl = requestUrl + "?" + param + "=" + params[param];
+                isQuestion = false;
+            } else if (params[param]){
+                // if match the condition and at second time, add & as prefix search query
+                requestUrl = requestUrl + "&" + param + "=" + params[param];
             }
-            requestUrl = (params.query ? requestUrl + "query=" + params.query : requestUrl)
-            requestUrl = (params.category ? requestUrl + "category=" + params.category : requestUrl)
-            requestUrl = (params.prefecture ? requestUrl + "prefecture=" + params.prefecture : requestUrl)
-            requestUrl = (params.items ? requestUrl + "items=" + params.items : requestUrl)
         });
 
         console.log("request url is sent.", requestUrl);
@@ -73,6 +74,7 @@ const initialState: SPOT_STATE = {
     ],
     params: {
         last: 0,
+        page: 0,
         count: 0,
         query: "",
         category: 0,
@@ -138,6 +140,7 @@ export const { selectSpot, showError } = spotSlice.actions;
 
 export const selectError = (state: RootState) => state.spot.error;
 export const selectSpots = (state: RootState) => state.spot.spots;
+export const selectParams = (state: RootState) => state.spot.params;
 export const selectSelectedSpot = (state: RootState) => state.spot.selectSpot;
 
 export default spotSlice.reducer;

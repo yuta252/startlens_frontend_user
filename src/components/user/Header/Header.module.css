@@ -3,3 +3,8 @@
     height: 50px;
     width: 100%;
 }
+
+.header_log_wrapper {
+    display: flex;
+    cursor: pointer;
+}

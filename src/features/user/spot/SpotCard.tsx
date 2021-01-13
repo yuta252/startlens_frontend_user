@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from 'react-router-dom';
 
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import {
@@ -16,8 +17,10 @@ import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 
 import { AppDispatch } from '../../../app/store';
 import {
-    selectSpots
+    selectSpots,
+    selectSpot
 } from './spotSlice';
+import { SPOT } from '../../types';
 import { majorCategoryChipObj } from '../../../app/constant';
 import customStyles from './Top.module.css';
 
@@ -54,13 +57,17 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const SpotCard: React.FC = () => {
     const classes = useStyles();
+    const history = useHistory();
+    const dispatch: AppDispatch = useDispatch();
+    const handleLink = (path: string) => history.push(path);
 
     const [like, setLike] = useState(false);
 
     const spots = useSelector(selectSpots);
 
-    const displaySpotAction = () => {
-        console.log("spot is clicked")
+    const displaySpotAction = (spot: SPOT) => {
+        dispatch(selectSpot(spot));
+        handleLink('/spots/detail');
     }
 
     const likeClickAction = () => {
@@ -74,7 +81,7 @@ const SpotCard: React.FC = () => {
                 <Paper key={index} className={classes.paper}>
                     <Grid container>
                         <Grid item xs={12} sm={3}>
-                            <ButtonBase className={classes.image} onClick={ () => displaySpotAction()}>
+                            <ButtonBase className={classes.image} onClick={ () => displaySpotAction(spot)}>
                                 { spot.profile.url ?
                                     (<img className={classes.img} alt="spotImage" src={spot.profile.url} />)
                                     : (<Avatar variant="rounded" src={`${process.env.PUBLIC_URL}/assets/AppIcon_1024_1024.png`} className={classes.img} alt="logo" />)
@@ -82,7 +89,7 @@ const SpotCard: React.FC = () => {
                             </ButtonBase>
                         </Grid>
                         <Grid item xs={12} sm={9} className={classes.spotContent}>
-                            <Link onClick={ () => displaySpotAction()} color="textSecondary">
+                            <Link onClick={ () => displaySpotAction(spot)} color="textSecondary">
                                 <Typography variant="h6" className={classes.spotTitle}>{ spot.multiProfiles.slice(-1)[0].username}</Typography>
                             </Link>
                             <div className={customStyles.spot_subtitle_wrapper}>

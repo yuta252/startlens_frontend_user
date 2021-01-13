@@ -15,25 +15,18 @@ import UserFooter from './components/user/Footer/Footer';
 
 const useStyles = makeStyles( (theme) => ({
     root: {
-        display: 'flex'
     },
     appBarSpacer: theme.mixins.toolbar,
     content: {
-        flexGlow: 1,
         height: '100vh',
         overflow: 'auto',
     },
-    container: {
-        padding: theme.spacing(4),
-    }
 }));
 
 const App: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
     const location = useLocation();
-    const isDisplayedAdmin: Boolean = !(location.pathname === '/admin/signin' || location.pathname === '/admin/signup');
     const isDisplayedUser: Boolean = !(location.pathname === '/signin' || location.pathname === '/signup');
-    const isAdminPath: Boolean = /^\/admin\//.test(location.pathname)
     const classes = useStyles();
 
     useEffect( () => {
@@ -45,13 +38,14 @@ const App: React.FC = () => {
 
     return (
         <div className={classes.root}>
-            {!isAdminPath && isDisplayedUser && <UserHeader />}
+            {isDisplayedUser && <UserHeader />}
             <main className={classes.content}>
-                { isDisplayedAdmin && isDisplayedUser &&  <div className={classes.appBarSpacer} /> }
-                <Container maxWidth={false} className={classes.container} >
+                { isDisplayedUser &&  <div className={classes.appBarSpacer} /> }
+                <Container maxWidth={false}>
                     <Router />
                 </Container>
             </main>
+            {isDisplayedUser && <UserFooter />}
         </div>
     );
 }

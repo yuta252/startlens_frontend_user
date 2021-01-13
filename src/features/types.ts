@@ -17,7 +17,7 @@ export interface AUTH_USER_STATE {
     isLoading: boolean;
 }
 
-/* sight */
+/* spotsSlice */
 export interface SPOT_PROFILE {
     id: number;
     userId: number;
@@ -50,6 +50,7 @@ export interface SPOT {
 
 export interface SPOT_SEARCH_PARAMS {
     last: number;
+    page: number;
     count: number;
     query: string;
     category: number;
@@ -72,4 +73,30 @@ export interface SPOT_STATE {
     spots: SPOT[];
     params: SPOT_SEARCH_PARAMS;
     selectSpot: SPOT;
+}
+
+/* exhibitSlice */
+export interface PICTURE {
+    id: number;
+    url: string;
+}
+
+export interface MULTI_EXHIBIT {
+    id: number;
+    exhibitId: number;
+    lang: string;
+    name: string;
+    description: string;
+}
+
+export interface READ_EXHIBIT {
+    id: number;
+    pictures: PICTURE[];
+    multiExhibits: MULTI_EXHIBIT[];
+}
+
+export interface EXHIBIT_STATE {
+    error: ERROR;
+    exhibits: READ_EXHIBIT[];
+    selectExhibit: READ_EXHIBIT;
 }

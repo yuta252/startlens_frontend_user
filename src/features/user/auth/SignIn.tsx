@@ -26,9 +26,9 @@ import commonStyles from "../../../assets/Style.module.css";
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
-        height: '100vh',
+        height: 'calc(100vh + 24px)',
         width: '100vw',
-        margin: '-32px -32px -32px -32px',
+        margin: '-24px -24px -24px -24px',
         backgroundImage: `url(${process.env.PUBLIC_URL}/assets/background-cover.jpg)`,
         backgroundRepeat: 'no-repeat',
         backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],

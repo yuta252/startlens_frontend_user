@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 import {
@@ -9,6 +10,8 @@ import {
     Toolbar,
     Typography
 } from '@material-ui/core';
+
+import customStyles from './Header.module.css';
 
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -47,14 +50,19 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const Header: React.FC = () => {
     const classes = useStyles();
+    const history = useHistory();
+    const handleLink = (path: string) => history.push(path);
+
     return (
         <AppBar position="fixed" className={classes.appBar}>
             <Toolbar className={classes.toolBar}>
                 <div className={classes.toolbarTitle}>
-                    <Avatar variant="rounded" src={`${process.env.PUBLIC_URL}/assets/AppIcon_1024_1024.png`} alt="logo" />
-                    <Typography variant="h5" className={classes.title}>
-                        Startlens
-                    </Typography>
+                    <div className={customStyles.header_log_wrapper} onClick={() => handleLink('/')}>
+                        <Avatar variant="rounded" src={`${process.env.PUBLIC_URL}/assets/AppIcon_1024_1024.png`} alt="logo" />
+                        <Typography variant="h5" className={classes.title}>
+                            Startlens
+                        </Typography>
+                    </div>
                 </div>
                 <nav>
                     <Link variant="button" href="#" color="textPrimary" className={classes.link}>

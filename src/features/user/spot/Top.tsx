@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     image: {
         width: '100vw',
         height: '350px',
-        margin: '-32px -32px 80px -32px',
+        margin: '0px 24px 80px -24px',
         backgroundImage: `url(${process.env.PUBLIC_URL}/assets/background-cover.jpg)`,
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
