@@ -2,7 +2,10 @@ import React, { useEffect } from 'react';
 import Container from '@material-ui/core/Container';
 import { makeStyles } from "@material-ui/core/styles";
 
-import { fetchAsyncGetSpots } from './features/user/spot/spotSlice';
+import {
+    fetchAsyncGetSpots
+} from './features/user/spot/spotSlice';
+import { fetchAsyncGetUserInfo } from './features/user/auth/authUserSlice';
 
 import { AppDispatch } from './app/store';
 import Router from './routes/Router';
@@ -31,7 +34,10 @@ const App: React.FC = () => {
 
     useEffect( () => {
         const fetchBootLoader = async () => {
-            await dispatch(fetchAsyncGetSpots({items: 3}))
+            if (localStorage.localJWT) {
+                await dispatch(fetchAsyncGetUserInfo())
+                await dispatch(fetchAsyncGetSpots({items: 3}))
+            }
         };
         fetchBootLoader();
     }, [dispatch]);
