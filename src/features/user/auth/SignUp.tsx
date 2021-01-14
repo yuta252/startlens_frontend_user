@@ -15,6 +15,8 @@ import {
 
 import { AppDispatch } from "../../../app/store";
 import {
+    fetchAsyncLogin,
+    fetchAsyncRegister,
     selectError,
     selectIsLoading,
     showError,
@@ -103,9 +105,19 @@ const SignUp: React.FC = () => {
             return false
         }
 
-        // TODO: サーバーへのユーザー情報新規登録処理
-        // TODO: 新規登録情報を利用してログイン処理
-        window.location.href = "/";
+        dispatch(toggleLoading());
+        const result = await dispatch(fetchAsyncRegister({ email: credential.email, password: credential.password }));
+        // TODO: サーバーのバリデーションハンドリング
+        if (fetchAsyncRegister.rejected.match(result)) {
+            console.log(result)
+            dispatch(toggleLoading());
+            return false
+        }
+        if (fetchAsyncRegister.fulfilled.match(result)) {
+            dispatch(toggleLoading());
+            await dispatch(fetchAsyncLogin({ email: credential.email, password: credential.password }));
+            window.location.href = "/profile";
+        }
     };
 
     return (

@@ -11,10 +11,43 @@ export interface ERROR_RESPONSE {
 }
 
 /* authUserSlice.ts */
+export interface CRED {
+    email: string;
+    password: string;
+}
+
+export interface JWT {
+    token: string;
+    email: string;
+}
+
+export interface POST_PROFILE {
+    id: number;
+    username: string;
+    imageFile: string;
+    sex: number;
+    birth: number;
+    country: string;
+    lang: string;
+}
+
+export interface USER {
+    id: number;
+    email: string;
+    username: string;
+    thumbnailUrl: string;
+    sex: number;
+    birth: number;
+    country: string;
+    lang: string;
+}
+
 export interface AUTH_USER_STATE {
     error: ERROR;
     isLoginView: boolean;
     isLoading: boolean;
+    user: USER;
+    editedProfile: POST_PROFILE;
 }
 
 /* spotsSlice */

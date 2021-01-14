@@ -15,6 +15,7 @@ import {
 import { Alert, AlertTitle } from '@material-ui/lab';
 
 import {
+    fetchAsyncLogin,
     selectError,
     selectIsLoading,
     showError,
@@ -98,7 +99,18 @@ const SignIn: React.FC = () => {
             return false
         }
         dispatch(toggleLoading());
-        window.location.href = "/";
+        const result = await dispatch(fetchAsyncLogin(credential));;
+        // TODO: サーバーでのレスポンスエラー処理
+        if (fetchAsyncLogin.rejected.match(result)) {
+            console.log(result)
+            dispatch(toggleLoading());
+            dispatch(showError({ isError: true, message: "メールアドレスまたはパスワードに誤りがあります。" }))
+            return false
+        }
+        if (fetchAsyncLogin.fulfilled.match(result)) {
+            dispatch(toggleLoading());
+            window.location.href = "/";
+        }
     };
 
 
