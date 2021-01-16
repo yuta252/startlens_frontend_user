@@ -5,6 +5,8 @@ import { truncate } from 'fs';
 import { RootState } from '../../../app/store';
 import {
     ERROR,
+    FAVORITE,
+    POST_FAVORITE,
     POST_REVIEW,
     REVIEW,
     SPOT,
@@ -33,7 +35,13 @@ export const fetchAsyncGetSpots = createAsyncThunk(
 
         console.log("request url is sent.", requestUrl);
         const res = await axios.get<SPOT_PAGINATE_INDEX>(
-            `${requestUrl}`
+            `${requestUrl}`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `${localStorage.localJWT}`,
+                },
+            }
         );
         console.log("res.data", res.data)
         return res.data;
@@ -69,6 +77,38 @@ export const fetchAsyncDeleteReview = createAsyncThunk(
             },
         );
         return review;
+    }
+);
+
+export const fetchAsyncCreateFavorite = createAsyncThunk(
+    "favorite/createFavorites",
+    async (favorite: POST_FAVORITE) => {
+        const res = await axios.post<FAVORITE>(
+            `${process.env.REACT_APP_API_URL}/api/v1/tourist/favorites`,
+            { "favorite": favorite },
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `${localStorage.localJWT}`,
+                },
+            }
+        );
+        return res.data
+    }
+);
+
+export const fetchAsyncDeleteFavorite = createAsyncThunk(
+    "favorite/deleteFavorites",
+    async (favorite: POST_FAVORITE) => {
+        await axios.delete(
+            `${process.env.REACT_APP_API_URL}/api/v1/tourist/favorites/${favorite.userId}`,{
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `${localStorage.localJWT}`,
+                },
+            },
+        );
+        return favorite;
     }
 );
 
@@ -194,6 +234,16 @@ export const spotSlice = createSlice({
         showError(state, action: PayloadAction<ERROR>) {
             state.error = action.payload;
         },
+        onFavorite(state, action: PayloadAction<SPOT>) {
+            state.spots = state.spots.map( (spot) =>
+                spot.id === action.payload.id ? { ...spot, isFavorite: true } : spot
+            )
+        },
+        offFavorite(state, action: PayloadAction<SPOT>) {
+            state.spots = state.spots.map( (spot) =>
+                spot.id === action.payload.id ? { ...spot, isFavorite: false } : spot
+            )
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(
@@ -243,7 +293,7 @@ export const spotSlice = createSlice({
     },
 });
 
-export const { selectSpot, showError } = spotSlice.actions;
+export const { offFavorite, onFavorite, selectSpot, showError } = spotSlice.actions;
 
 export const selectError = (state: RootState) => state.spot.error;
 export const selectSpots = (state: RootState) => state.spot.spots;

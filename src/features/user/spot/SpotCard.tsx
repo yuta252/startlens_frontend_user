@@ -17,6 +17,10 @@ import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 
 import { AppDispatch } from '../../../app/store';
 import {
+    fetchAsyncCreateFavorite,
+    fetchAsyncDeleteFavorite,
+    offFavorite,
+    onFavorite,
     selectSpots,
     selectSpot
 } from './spotSlice';
@@ -61,8 +65,6 @@ const SpotCard: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
     const handleLink = (path: string) => history.push(path);
 
-    const [like, setLike] = useState(false);
-
     const spots = useSelector(selectSpots);
 
     const displaySpotAction = (spot: SPOT) => {
@@ -70,9 +72,15 @@ const SpotCard: React.FC = () => {
         handleLink('/spots/detail');
     }
 
-    const likeClickAction = () => {
+    const favoriteClickAction = async (spot: SPOT) => {
+        if (spot.isFavorite) {
+            await dispatch(fetchAsyncDeleteFavorite({ userId: spot.id }))
+            dispatch(offFavorite(spot));
+        } else {
+            await dispatch(fetchAsyncCreateFavorite({ userId: spot.id }))
+            dispatch(onFavorite(spot));
+        }
         console.log("like is clicked")
-        setLike(!like)
     }
 
     return (
@@ -117,8 +125,8 @@ const SpotCard: React.FC = () => {
                                 </table>
                             </div>
                             <div className={customStyles.like_btn_wrapper}>
-                                <div onClick={ () => likeClickAction()}>
-                                    {like ? <ThumbUpIcon color="error"/> : <ThumbUpIcon color="disabled"/>}
+                                <div onClick={ () => favoriteClickAction(spot)}>
+                                    {spot.isFavorite ? <ThumbUpIcon color="error"/> : <ThumbUpIcon color="disabled"/>}
                                 </div>
                             </div>
                         </Grid>
