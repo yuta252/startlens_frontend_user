@@ -1,13 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import {
     Avatar,
+    Button,
     ButtonBase,
     Chip,
     Container,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     Grid,
     Paper,
     Table,
@@ -15,21 +21,29 @@ import {
     TableCell,
     TableHead,
     TableRow,
+    TextField,
     Typography
 } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
 import { Rating } from '@material-ui/lab';
 
 import { AppDispatch } from '../../../app/store';
-import { selectSelectedSpot } from './spotSlice';
+import {
+    fetchAsyncCreateReview,
+    selectSelectedSpot
+} from './spotSlice';
+import { selectUser } from '../auth/authUserSlice';
 import {
     fetchAsyncGetExhibits,
     selectExhibit,
     selectExhibits,
-} from '../exhibit/exhibitSlice'
+} from '../exhibit/exhibitSlice';
+import GoogleMapComponent from './GoogleMapComponent';
+import ReviewList from './ReviewList';
 import { majorCategoryChipObj } from '../../../app/constant';
 import commonStyles from '../../../assets/Style.module.css';
 import customStyles from './Top.module.css';
-import { READ_EXHIBIT } from '../../types';
+import { POST_REVIEW, READ_EXHIBIT } from '../../types';
 
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -53,6 +67,20 @@ const useStyles = makeStyles((theme: Theme) => ({
     tableHead: {
         width: '20%'
     },
+    dialog: {
+        width: '450px'
+    },
+    noReviewContentText: {
+        textAlign: 'center',
+        margin: theme.spacing(4, 0)
+    },
+    addReviewButton: {
+        width: "140px",
+        paddingLeft: theme.spacing(1),
+        paddingRight: theme.spacing(1),
+        color: "white",
+        fontWeight: theme.typography.fontWeightBold,
+    },
     recommendContent: {
         padding: theme.spacing(0, 1),
         marginBottom: theme.spacing(2)
@@ -73,8 +101,14 @@ const SpotDetail: React.FC = () => {
     const handleLink = (path: string) => history.push(path);
     const dispatch: AppDispatch = useDispatch();
 
+    const [open, setOpen] = useState(false);
+    const [postReview, setPostReview] = useState({ postReview: "", rating: 0 })
+
     const selectedSpot = useSelector(selectSelectedSpot);
     const selectedExhibits = useSelector(selectExhibits);
+    const user = useSelector(selectUser);
+
+    const isDisabled: boolean = (postReview.postReview.length === 0 || !postReview.rating)
 
     const tableContents = [
         { title: "ユーザー名", content: selectedSpot.multiProfiles.slice(-1)[0].username},
@@ -93,10 +127,37 @@ const SpotDetail: React.FC = () => {
         fetchExhibitsLoader();
     }, [selectedSpot])
 
+    const handleOpen = () => {
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+    }
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        const name = e.target.name;
+        setPostReview({...postReview, [name]: value})
+    };
+
     const selectExhibitAction = (exhibit: READ_EXHIBIT) => {
         dispatch(selectExhibit(exhibit));
         handleLink('/exhibits/detail');
-        console.log("exhibit is clicked");
+    }
+
+    const createReviewAction = async () => {
+        const postContent: POST_REVIEW = {...postReview, userId: selectedSpot.id, lang: user.lang}
+        console.log("postContent", postContent)
+        const result = await dispatch(fetchAsyncCreateReview(postContent));
+        if (fetchAsyncCreateReview.rejected.match(result)) {
+            console.log("failed to post review");
+            return false
+        }
+        if (fetchAsyncCreateReview.fulfilled.match(result)) {
+            console.log("success to post review");
+            setOpen(false);
+        }
     }
 
     return (
@@ -132,6 +193,71 @@ const SpotDetail: React.FC = () => {
                             ))}
                         </TableBody>
                     </Table>
+                </div>
+                <div className={commonStyles.spacer__small} />
+                {selectedSpot.profile.latitude && selectedSpot.profile.longitude && (<GoogleMapComponent />)}
+                <div className={customStyles.spot_detail_divider} />
+                <div>
+                    <div className={customStyles.review_title_wrapper}>
+                        <Typography variant="h6" color="textPrimary">レビュー一覧</Typography>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            startIcon={<AddIcon />}
+                            size="small"
+                            className={classes.addReviewButton}
+                            onClick={ handleOpen }
+                            disableElevation
+                        >
+                            レビュー投稿
+                        </Button>
+                        <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                            <DialogTitle id="form-dialog-title" className={classes.dialog}>レビューの新規投稿</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText>
+                                    評価とレビューを投稿してください
+                                </DialogContentText>
+                                <div className={commonStyles.spacer__medium} />
+                                <Rating className={classes.rating} 
+                                    value={postReview.rating} 
+                                    name="rating" 
+                                    onChange={(event, newValue) => setPostReview({...postReview, rating: Number(newValue)})}
+                                />
+                                <div className={commonStyles.spacer__small} />
+                                <TextField
+                                    variant="outlined"
+                                    fullWidth
+                                    label="レビュー"
+                                    type="text"
+                                    name="postReview"
+                                    multiline
+                                    rows={4}
+                                    value={postReview.postReview}
+                                    onChange={handleInputChange}
+                                />
+                                <div className={commonStyles.spacer__medium} />
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleClose} color="primary">
+                                    キャンセル
+                                </Button>
+                                <Button
+                                    onClick={() => createReviewAction()}
+                                    disabled={isDisabled} color="primary"
+                                >
+                                    投稿
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
+                    </div>
+                    { selectedSpot.reviews[0] ? (
+                            <div className={customStyles.review_content_wrapper}>
+                                <ReviewList />
+                            </div>
+                        ) : (
+                            <Typography variant="body1" color="textSecondary" className={classes.noReviewContentText}>レビューがありません。</Typography>
+                        )
+                    }
                 </div>
                 <div className={customStyles.spot_detail_divider} />
                 <div>

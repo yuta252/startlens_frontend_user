@@ -5,6 +5,8 @@ import { truncate } from 'fs';
 import { RootState } from '../../../app/store';
 import {
     ERROR,
+    POST_REVIEW,
+    REVIEW,
     SPOT,
     SPOT_GET_PARAMS,
     SPOT_PAGINATE_INDEX,
@@ -33,7 +35,40 @@ export const fetchAsyncGetSpots = createAsyncThunk(
         const res = await axios.get<SPOT_PAGINATE_INDEX>(
             `${requestUrl}`
         );
+        console.log("res.data", res.data)
         return res.data;
+    }
+);
+
+export const fetchAsyncCreateReview = createAsyncThunk(
+    "review/createReviews",
+    async (review: POST_REVIEW) => {
+        const res = await axios.post<REVIEW>(
+            `${process.env.REACT_APP_API_URL}/api/v1/tourist/reviews`,
+            { "review": review },
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `${localStorage.localJWT}`,
+                },
+            }
+        );
+        return res.data
+    }
+);
+
+export const fetchAsyncDeleteReview = createAsyncThunk(
+    "review/deleteReviews",
+    async (review: REVIEW) => {
+        await axios.delete(
+            `${process.env.REACT_APP_API_URL}/api/v1/tourist/reviews/${review.id}`,{
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `${localStorage.localJWT}`,
+                },
+            },
+        );
+        return review;
     }
 );
 
@@ -46,6 +81,7 @@ const initialState: SPOT_STATE = {
     spots: [
         {
             id: 0,
+            isFavorite: false,
             profile: {
                 id: 0,
                 userId: 0,
@@ -53,7 +89,10 @@ const initialState: SPOT_STATE = {
                 telephone: "",
                 companySite: "",
                 url: "",
-                rating: 0,
+                rating: 0.0,
+                ratingCount: 0,
+                latitude: null,
+                longitude: null,
             },
             multiProfiles: [
                 {
@@ -69,6 +108,22 @@ const initialState: SPOT_STATE = {
                     businessHours: "",
                     holiday: ""
                 }
+            ],
+            reviews: [
+                {
+                    id: 0,
+                    userId: 0,
+                    touristId: 0,
+                    lang: "",
+                    postReview: "",
+                    rating: 0.0,
+                    createdAt: "",
+                    tourist: {
+                        id: 0,
+                        username: "",
+                        thumbnailUrl: ""
+                    },
+                }
             ]
         }
     ],
@@ -82,6 +137,7 @@ const initialState: SPOT_STATE = {
     },
     selectSpot: {
         id: 0,
+        isFavorite: false,
         profile: {
             id: 0,
             userId: 0,
@@ -90,6 +146,9 @@ const initialState: SPOT_STATE = {
             companySite: "",
             url: "",
             rating: 0,
+            ratingCount: 0,
+            latitude: null,
+            longitude: null
         },
         multiProfiles: [
             {
@@ -104,6 +163,22 @@ const initialState: SPOT_STATE = {
                 entranceFee: "",
                 businessHours: "",
                 holiday: ""
+            }
+        ],
+        reviews: [
+            {
+                id: 0,
+                userId: 0,
+                touristId: 0,
+                lang: "",
+                postReview: "",
+                rating: 0.0,
+                createdAt: "",
+                tourist: {
+                    id: 0,
+                    username: "",
+                    thumbnailUrl: ""
+                },
             }
         ]
     }
@@ -130,6 +205,38 @@ export const spotSlice = createSlice({
                     ...state,
                     spots: data,
                     params: meta.params
+                };
+            }
+        );
+        builder.addCase(
+            fetchAsyncCreateReview.fulfilled,
+            (state, action: PayloadAction<REVIEW>) => {
+                return {
+                    ...state,
+                    spots: state.spots.map( (spot) =>
+                        spot.id !== action.payload.userId ? spot : (
+                            {...spot, reviews: [action.payload, ...spot.reviews]}
+                        )
+                    ),
+                    selectSpot: {...state.selectSpot, reviews: [action.payload, ...state.selectSpot.reviews]}
+                };
+            }
+        );
+        builder.addCase(
+            fetchAsyncDeleteReview.fulfilled,
+            (state, action: PayloadAction<REVIEW>) => {
+                return {
+                    ...state,
+                    spots: state.spots.map( (spot) =>
+                        spot.id !== action.payload.userId ? spot : (
+                            {...spot, reviews: spot.reviews.filter( (review) =>
+                                review.id !== action.payload.id
+                            )}
+                        )
+                    ),
+                    selectSpot: {...state.selectSpot, reviews: state.selectSpot.reviews.filter( (review) =>
+                        review.id !== action.payload.id
+                    )}
                 };
             }
         );

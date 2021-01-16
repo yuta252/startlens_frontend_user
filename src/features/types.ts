@@ -59,6 +59,9 @@ export interface SPOT_PROFILE {
     companySite: string;
     url: string;
     rating: number;
+    ratingCount: number;
+    latitude: number | null;
+    longitude: number | null;
 }
 
 export interface SPOT_MULTI_PROFILE {
@@ -75,10 +78,35 @@ export interface SPOT_MULTI_PROFILE {
     holiday: string;
 }
 
+export interface REVIEW_OWNER {
+    id: number;
+    username: string;
+    thumbnailUrl: string;
+}
+export interface REVIEW {
+    id: number;
+    userId: number;
+    touristId: number;
+    lang: string;
+    postReview: string;
+    rating: number;
+    createdAt: string;
+    tourist: REVIEW_OWNER;
+}
+
+export interface POST_REVIEW {
+    userId: number;
+    lang: string;
+    postReview: string;
+    rating: number;
+}
+
 export interface SPOT {
     id: number;
+    isFavorite: boolean;
     profile: SPOT_PROFILE;
     multiProfiles: SPOT_MULTI_PROFILE[];
+    reviews: REVIEW[];
 }
 
 export interface SPOT_SEARCH_PARAMS {
