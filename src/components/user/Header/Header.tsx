@@ -8,6 +8,7 @@ import {
     Avatar,
     Badge,
     Button,
+    IconButton,
     Link,
     ListItemIcon,
     ListItemText,
@@ -18,7 +19,9 @@ import {
 import Menu, { MenuProps } from '@material-ui/core/Menu';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import PersonIcon from '@material-ui/icons/Person';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 
+import { selectFavorites } from '../../../features/user/spot/spotSlice';
 import { selectUser } from '../../../features/user/auth/authUserSlice';
 import customStyles from './Header.module.css';
 
@@ -56,7 +59,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     signUpButton: {
         margin: theme.spacing(1,1.5),
         fontWeight: theme.typography.fontWeightBold,
-    }
+    },
 }));
 
 
@@ -118,6 +121,7 @@ const Header: React.FC = () => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     const user = useSelector(selectUser);
+    const favorites = useSelector(selectFavorites);
 
     const handleClick = (e: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(e.currentTarget);
@@ -132,6 +136,15 @@ const Header: React.FC = () => {
         window.location.href = "/signin";
     }
 
+    const moveToProfile = () => {
+        handleLink('/profile/edit');
+        handleClose();
+    }
+
+    const moveToFavorites = () => {
+        handleLink('/favorites');
+    }
+
     return (
         <AppBar position="fixed" className={classes.appBar}>
             <Toolbar className={classes.toolBar}>
@@ -144,7 +157,17 @@ const Header: React.FC = () => {
                     </div>
                 </div>
                 {localStorage.startlensJWT ? (
-                    <div>
+                    <div className={customStyles.header_button_wrapper}>
+                        <div className={customStyles.header_favorites_button} onClick={moveToFavorites}>
+                            <IconButton>
+                                <Badge badgeContent={favorites ? favorites.length : 0}
+                                    color="primary" showZero max={100} 
+                                    anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
+                                >
+                                    <ThumbUpIcon />
+                                </Badge>
+                            </IconButton>
+                        </div>
                         <Button
                             aria-controls="customized-menu"
                             aria-haspopup="true"
@@ -174,7 +197,7 @@ const Header: React.FC = () => {
                             open={Boolean(anchorEl)}
                             onClose={handleClose}
                         >
-                            <MenuItem onClick={logout}>
+                            <MenuItem onClick={moveToProfile}>
                                 <ListItemIcon>
                                     <PersonIcon fontSize="small" />
                                 </ListItemIcon>

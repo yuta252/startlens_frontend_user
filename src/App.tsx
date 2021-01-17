@@ -3,7 +3,8 @@ import Container from '@material-ui/core/Container';
 import { makeStyles } from "@material-ui/core/styles";
 
 import {
-    fetchAsyncGetSpots
+    fetchAsyncGetFavorites,
+    fetchAsyncGetSpots,
 } from './features/user/spot/spotSlice';
 import { fetchAsyncGetUserInfo } from './features/user/auth/authUserSlice';
 
@@ -36,10 +37,10 @@ const App: React.FC = () => {
 
     useEffect( () => {
         const fetchBootLoader = async () => {
-            await dispatch(fetchAsyncGetUserInfo())
-            await dispatch(fetchAsyncGetSpots({items: 3}))
+            await dispatch(fetchAsyncGetUserInfo());
+            await dispatch(fetchAsyncGetSpots({items: 3}));
             if (localStorage.startlensJWT) {
-                console.log("useEffect")
+                await dispatch(fetchAsyncGetFavorites());
             }
         };
         fetchBootLoader();
