@@ -18,6 +18,8 @@ import UserFooter from './components/user/Footer/Footer';
 
 const useStyles = makeStyles( (theme) => ({
     root: {
+        display: 'flex',
+        flexDirection: 'column'
     },
     appBarSpacer: theme.mixins.toolbar,
     content: {
@@ -34,9 +36,10 @@ const App: React.FC = () => {
 
     useEffect( () => {
         const fetchBootLoader = async () => {
-            if (localStorage.localJWT) {
-                await dispatch(fetchAsyncGetUserInfo())
-                await dispatch(fetchAsyncGetSpots({items: 3}))
+            await dispatch(fetchAsyncGetUserInfo())
+            await dispatch(fetchAsyncGetSpots({items: 3}))
+            if (localStorage.startlensJWT) {
+                console.log("useEffect")
             }
         };
         fetchBootLoader();

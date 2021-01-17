@@ -101,6 +101,16 @@ export interface POST_REVIEW {
     rating: number;
 }
 
+export interface POST_FAVORITE {
+    userId: number;
+}
+
+export interface FAVORITE {
+    id: number;
+    userId: number;
+    touristId: number;
+}
+
 export interface SPOT {
     id: number;
     isFavorite: boolean;
