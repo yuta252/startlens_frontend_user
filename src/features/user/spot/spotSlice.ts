@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from "axios";
-import { truncate } from 'fs';
 
 import { RootState } from '../../../app/store';
 import {
@@ -24,11 +23,11 @@ export const fetchAsyncGetSpots = createAsyncThunk(
 
         Object.keys(params).map( (param, index) => {
             if(params[param] && isQuestion) {
-                // if match the condition and at only once, add ? as prefix search query
+                // if match the condition at only once, add ? as prefix search query
                 requestUrl = requestUrl + "?" + param + "=" + params[param];
                 isQuestion = false;
             } else if (params[param]){
-                // if match the condition and at second time, add & as prefix search query
+                // if match the condition at second times, add & as prefix search query
                 requestUrl = requestUrl + "&" + param + "=" + params[param];
             }
         });
@@ -77,6 +76,22 @@ export const fetchAsyncDeleteReview = createAsyncThunk(
             },
         );
         return review;
+    }
+);
+
+export const fetchAsyncGetFavorites = createAsyncThunk(
+    "favorite/getFavorites",
+    async () => {
+        const res = await axios.get<SPOT[]>(
+            `${process.env.REACT_APP_API_URL}/api/v1/tourist/favorites`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `${localStorage.startlensJWT}`,
+                },
+            }
+        );
+        return res.data;
     }
 );
 
@@ -221,7 +236,56 @@ const initialState: SPOT_STATE = {
                 },
             }
         ]
-    }
+    },
+    favorites: [
+        {
+            id: 0,
+            isFavorite: false,
+            profile: {
+                id: 0,
+                userId: 0,
+                majorCategory: 0,
+                telephone: "",
+                companySite: "",
+                url: "",
+                rating: 0.0,
+                ratingCount: 0,
+                latitude: null,
+                longitude: null,
+            },
+            multiProfiles: [
+                {
+                    id: 0,
+                    userId: 0,
+                    lang: "",
+                    username: "",
+                    selfIntro: "",
+                    addressPrefecture: "",
+                    addressCity: "",
+                    addressStreet: "",
+                    entranceFee: "",
+                    businessHours: "",
+                    holiday: ""
+                }
+            ],
+            reviews: [
+                {
+                    id: 0,
+                    userId: 0,
+                    touristId: 0,
+                    lang: "",
+                    postReview: "",
+                    rating: 0.0,
+                    createdAt: "",
+                    tourist: {
+                        id: 0,
+                        username: "",
+                        thumbnailUrl: ""
+                    },
+                }
+            ]
+        }
+    ],
 };
 
 export const spotSlice = createSlice({
@@ -238,9 +302,15 @@ export const spotSlice = createSlice({
             state.spots = state.spots.map( (spot) =>
                 spot.id === action.payload.id ? { ...spot, isFavorite: true } : spot
             )
+            state.favorites = state.favorites.map( (spot) =>
+                spot.id === action.payload.id ? { ...spot, isFavorite: true } : spot
+            )
         },
         offFavorite(state, action: PayloadAction<SPOT>) {
             state.spots = state.spots.map( (spot) =>
+                spot.id === action.payload.id ? { ...spot, isFavorite: false } : spot
+            )
+            state.favorites = state.favorites.map( (spot) =>
                 spot.id === action.payload.id ? { ...spot, isFavorite: false } : spot
             )
         },
@@ -290,6 +360,35 @@ export const spotSlice = createSlice({
                 };
             }
         );
+        builder.addCase(
+            fetchAsyncGetFavorites.fulfilled,
+            (state, action: PayloadAction<SPOT[]>) => {
+                return {
+                    ...state,
+                    favorites: action.payload
+                };
+            }
+        );
+        builder.addCase(
+            fetchAsyncCreateFavorite.fulfilled,
+            (state, action: PayloadAction<FAVORITE>) => {
+                return {
+                    ...state,
+                    favorites: [...state.spots.filter( (spot) => spot.id === action.payload.userId), ...state.favorites]
+                };
+            }
+        );
+        builder.addCase(
+            fetchAsyncDeleteFavorite.fulfilled,
+            (state, action: PayloadAction<POST_FAVORITE>) => {
+                return {
+                    ...state,
+                    favorites: state.favorites.filter( (spot) =>
+                        spot.id !== action.payload.userId
+                    )
+                };
+            }
+        );
     },
 });
 
@@ -299,5 +398,6 @@ export const selectError = (state: RootState) => state.spot.error;
 export const selectSpots = (state: RootState) => state.spot.spots;
 export const selectParams = (state: RootState) => state.spot.params;
 export const selectSelectedSpot = (state: RootState) => state.spot.selectSpot;
+export const selectFavorites = (state: RootState) => state.spot.favorites;
 
 export default spotSlice.reducer;

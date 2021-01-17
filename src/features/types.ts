@@ -144,6 +144,7 @@ export interface SPOT_STATE {
     spots: SPOT[];
     params: SPOT_SEARCH_PARAMS;
     selectSpot: SPOT;
+    favorites: SPOT[];
 }
 
 /* exhibitSlice */
