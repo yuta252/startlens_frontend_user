@@ -52,7 +52,7 @@ export const fetchAsyncGetUserInfo = createAsyncThunk(
             `${process.env.REACT_APP_API_URL}/api/v1/tourist/load`,
             {
                 headers: {
-                    Authorization: `${localStorage.localJWT}`,
+                    Authorization: `${localStorage.startlensJWT}`,
                 },
             }
         );
@@ -73,7 +73,7 @@ export const fetchAsyncUpdateProfile = createAsyncThunk(
             {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `${localStorage.localJWT}`,
+                    Authorization: `${localStorage.startlensJWT}`,
                 },
             }
         );
@@ -131,7 +131,7 @@ export const authUserSlice = createSlice({
         builder.addCase(
             fetchAsyncLogin.fulfilled,
             (state, action: PayloadAction<JWT>) => {
-                localStorage.setItem("localJWT", action.payload.token);
+                localStorage.setItem("startlensJWT", action.payload.token);
             }
         );
         builder.addCase(

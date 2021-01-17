@@ -39,7 +39,7 @@ export const fetchAsyncGetSpots = createAsyncThunk(
             {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `${localStorage.localJWT}`,
+                    Authorization: `${localStorage.startlensJWT}`,
                 },
             }
         );
@@ -57,7 +57,7 @@ export const fetchAsyncCreateReview = createAsyncThunk(
             {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `${localStorage.localJWT}`,
+                    Authorization: `${localStorage.startlensJWT}`,
                 },
             }
         );
@@ -72,7 +72,7 @@ export const fetchAsyncDeleteReview = createAsyncThunk(
             `${process.env.REACT_APP_API_URL}/api/v1/tourist/reviews/${review.id}`,{
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `${localStorage.localJWT}`,
+                    Authorization: `${localStorage.startlensJWT}`,
                 },
             },
         );
@@ -89,7 +89,7 @@ export const fetchAsyncCreateFavorite = createAsyncThunk(
             {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `${localStorage.localJWT}`,
+                    Authorization: `${localStorage.startlensJWT}`,
                 },
             }
         );
@@ -104,7 +104,7 @@ export const fetchAsyncDeleteFavorite = createAsyncThunk(
             `${process.env.REACT_APP_API_URL}/api/v1/tourist/favorites/${favorite.userId}`,{
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `${localStorage.localJWT}`,
+                    Authorization: `${localStorage.startlensJWT}`,
                 },
             },
         );

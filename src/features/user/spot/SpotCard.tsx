@@ -126,7 +126,7 @@ const SpotCard: React.FC = () => {
                             </div>
                             <div className={customStyles.like_btn_wrapper}>
                                 <div onClick={ () => favoriteClickAction(spot)}>
-                                    {spot.isFavorite ? <ThumbUpIcon color="error"/> : <ThumbUpIcon color="disabled"/>}
+                                    {localStorage.startlensJWT && (spot.isFavorite ? <ThumbUpIcon color="error"/> : <ThumbUpIcon color="disabled"/>)}
                                 </div>
                             </div>
                         </Grid>

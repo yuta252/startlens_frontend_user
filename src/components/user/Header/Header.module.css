@@ -1,10 +1,9 @@
-.header_wrapper {
-    background-color: gray;
-    height: 50px;
-    width: 100%;
-}
-
 .header_log_wrapper {
     display: flex;
     cursor: pointer;
+}
+
+.header_button_wrapper {
+    display: flex;
+    align-items: center;
 }
