@@ -172,3 +172,11 @@ export interface EXHIBIT_STATE {
     exhibits: READ_EXHIBIT[];
     selectExhibit: READ_EXHIBIT;
 }
+
+export interface USER_STATISTICS_PARAMS {
+    userId: number;
+}
+export interface USER_STATISTICS_RESPONSE {
+    isErrors: boolean;
+    message: string;
+}

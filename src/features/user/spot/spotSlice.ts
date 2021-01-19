@@ -11,7 +11,9 @@ import {
     SPOT,
     SPOT_GET_PARAMS,
     SPOT_PAGINATE_INDEX,
-    SPOT_STATE
+    SPOT_STATE,
+    USER_STATISTICS_PARAMS,
+    USER_STATISTICS_RESPONSE
 } from "../../types";
 
 
@@ -124,6 +126,23 @@ export const fetchAsyncDeleteFavorite = createAsyncThunk(
             },
         );
         return favorite;
+    }
+);
+
+export const fetchAsyncCreateUserStatistics = createAsyncThunk(
+    "userStatistics/createLogs",
+    async (userStatistics: USER_STATISTICS_PARAMS) => {
+        const res = await axios.post<USER_STATISTICS_RESPONSE>(
+            `${process.env.REACT_APP_API_URL}/api/v1/tourist/user_statistics`,
+            { "user_statistic": userStatistics },
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `${localStorage.startlensJWT}`,
+                },
+            }
+        );
+        return res.data
     }
 );
 

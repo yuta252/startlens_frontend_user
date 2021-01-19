@@ -38,6 +38,9 @@ import {
     selectExhibit,
     selectExhibits,
 } from '../exhibit/exhibitSlice';
+import {
+    fetchAsyncCreateUserStatistics
+} from './spotSlice';
 import GoogleMapComponent from './GoogleMapComponent';
 import ReviewList from './ReviewList';
 import { majorCategoryChipObj } from '../../../app/constant';
@@ -121,8 +124,13 @@ const SpotDetail: React.FC = () => {
     ]
 
     useEffect( () => {
+        console.log("useEffect is called")
         const fetchExhibitsLoader = async () => {
             await dispatch(fetchAsyncGetExhibits(selectedSpot.id))
+            // send logs to server only in the case of login
+            if (localStorage.startlensJWT) {
+                await dispatch(fetchAsyncCreateUserStatistics({userId: selectedSpot.id}))
+            }
         };
         fetchExhibitsLoader();
     }, [selectedSpot])
