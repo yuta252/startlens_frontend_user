@@ -229,19 +229,17 @@ const Profile: React.FC = () => {
     const saveThumbnailAction = async () => {
         const result = await dispatch(fetchAsyncUpdateThumbnail(editedThumbnail));
         if (fetchAsyncUpdateThumbnail.rejected.match(result)) {
-            console.log(result)
+            handleClose();
             return false
         }
         if (fetchAsyncUpdateThumbnail.fulfilled.match(result)) {
-            console.log(result);
+            handleClose();
         }
     }
 
     const saveProfileAction = async () => {
-        console.log("editedProfile", editedProfile)
         const result = await dispatch(fetchAsyncUpdateProfile(editedProfile));
         if (fetchAsyncUpdateProfile.rejected.match(result)) {
-            console.log(result)
             return false
         }
         if (fetchAsyncUpdateProfile.fulfilled.match(result)) {
@@ -294,8 +292,8 @@ const Profile: React.FC = () => {
                         <div className={customStyles.profile_user_settings_wrapper}>
                             <Typography variant="h6" className={classes.title}>{getStepContent(activeStep)}</Typography>
                             <div className={commonStyles.spacer__small} />
-                            { editedThumbnail.imageFile ?
-                                (<Avatar variant="rounded" src={editedThumbnail.imageFile} className={classes.avatar} alt="thumbnail" />)
+                            { user.thumbnailUrl ?
+                                (<Avatar variant="rounded" src={user.thumbnailUrl} className={classes.avatar} alt="thumbnail" />)
                                 : (<Avatar variant="rounded" src={`${process.env.PUBLIC_URL}/assets/AppIcon_1024_1024.png`} className={classes.avatar} alt="logo" />) 
                             }
                             <Button
