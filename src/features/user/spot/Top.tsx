@@ -58,7 +58,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         transform: 'translateX(-50%) translateY(-50%)',
         fontWeight: theme.typography.fontWeightBold,
         borderRadius: '20px',
-        border: 'solid 2px'
+        border: 'solid 2px',
+        textTransform: 'none',
     },
     paper: {
         position: 'absolute',
@@ -203,22 +204,23 @@ const Top: React.FC = () => {
         setQuery(value);
     };
 
+    const moveToAboutAction = () => {
+        handleLink('/about');
+    }
+
     const searchQueryAction = async () => {
         await dispatch(fetchAsyncGetSpots({query: query}));
         handleLink('/spots/search');
-        console.log("query is clicked")
     }
 
     const searchCountryAction = async (prefecture: string) => {
         await dispatch(fetchAsyncGetSpots({prefecture: prefecture}));
         handleLink('/spots/search');
-        console.log("country is clicked")
     }
 
     const searchCategoryAction = async (category: number) => {
         await dispatch(fetchAsyncGetSpots({category: category}));
         handleLink('/spots/search');
-        console.log("category action is clicked")
     }
 
     return (
@@ -229,9 +231,10 @@ const Top: React.FC = () => {
                     variant="outlined"
                     color="primary"
                     className={classes.aboutButton}
+                    onClick={moveToAboutAction}
                     disableElevation
                 >
-                    What's Startlens
+                    What's Startlens?
                 </Button>
                 <div className={customStyles.top_title_wrapper}>
                     <Typography variant="h4" className={classes.title}>Let's start on a journey online</Typography>
@@ -379,7 +382,9 @@ const Top: React.FC = () => {
                         </Grid>
                         <div className={customStyles.other_category_wrapper}>
                             {Object.keys(majorCategoryChipObj).map( (key) => (
-                                <Chip key={key} label={`${majorCategoryChipObj[Number(key)]}`} variant="outlined" onClick={ () => searchCategoryAction(Number(key)) } className={classes.chip}/>
+                                Number(key) !== 0 && (
+                                    <Chip key={key} label={`${majorCategoryChipObj[Number(key)]}`} variant="outlined" onClick={ () => searchCategoryAction(Number(key)) } className={classes.chip}/>
+                                )
                             ))}
                         </div>
                     </Grid>
