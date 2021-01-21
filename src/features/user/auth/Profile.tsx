@@ -26,9 +26,12 @@ import {
 import { AppDispatch } from '../../../app/store';
 import {
     editProfile,
+    editThumbnail,
     fetchAsyncGetUserInfo,
     fetchAsyncUpdateProfile,
+    fetchAsyncUpdateThumbnail,
     selectEditedProfile,
+    selectEditedThumbnail,
     selectUser
 } from './authUserSlice';
 import { POST_PROFILE } from '../../types';
@@ -97,6 +100,8 @@ const Profile: React.FC = () => {
 
     const selectedUser = useSelector(selectUser);
     const editedProfile = useSelector(selectEditedProfile);
+    const editedThumbnail = useSelector(selectEditedThumbnail);
+    const user = useSelector(selectUser);
 
     const [activeStep, setActiveStep] = useState(0);
     const [open, setOpen] = useState(false);
@@ -104,7 +109,7 @@ const Profile: React.FC = () => {
     const steps = getSteps();
 
     const isDisabledLanguage = (editedProfile.lang.length === 0)
-    const isDisabledProfile = (editedProfile.imageFile.length === 0 || editedProfile.username.length === 0 || editedProfile.birth === 0 ||
+    const isDisabledProfile = (editedProfile.username.length === 0 || editedProfile.birth === 0 ||
                                 editedProfile.sex === 0 || editedProfile.country === "na")
 
     const handleOpen = () => {
@@ -212,7 +217,7 @@ const Profile: React.FC = () => {
                 let ctx = canvas.getContext('2d');
                 ctx?.drawImage(image, 0, 0, width, height);
                 const encodedImage = ctx?.canvas.toDataURL(file.type) as string;
-                dispatch(editProfile({...editedProfile, imageFile: encodedImage}))
+                dispatch(editThumbnail({...editedThumbnail, imageFile: encodedImage}))
             }
             image.src = e.target?.result as string;
         }
@@ -220,6 +225,17 @@ const Profile: React.FC = () => {
             console.log("error: cannot read any files");
         }
     };
+
+    const saveThumbnailAction = async () => {
+        const result = await dispatch(fetchAsyncUpdateThumbnail(editedThumbnail));
+        if (fetchAsyncUpdateThumbnail.rejected.match(result)) {
+            console.log(result)
+            return false
+        }
+        if (fetchAsyncUpdateThumbnail.fulfilled.match(result)) {
+            console.log(result);
+        }
+    }
 
     const saveProfileAction = async () => {
         console.log("editedProfile", editedProfile)
@@ -278,8 +294,8 @@ const Profile: React.FC = () => {
                         <div className={customStyles.profile_user_settings_wrapper}>
                             <Typography variant="h6" className={classes.title}>{getStepContent(activeStep)}</Typography>
                             <div className={commonStyles.spacer__small} />
-                            { editedProfile.imageFile ?
-                                (<Avatar variant="rounded" src={editedProfile.imageFile} className={classes.avatar} alt="thumbnail" />)
+                            { editedThumbnail.imageFile ?
+                                (<Avatar variant="rounded" src={editedThumbnail.imageFile} className={classes.avatar} alt="thumbnail" />)
                                 : (<Avatar variant="rounded" src={`${process.env.PUBLIC_URL}/assets/AppIcon_1024_1024.png`} className={classes.avatar} alt="logo" />) 
                             }
                             <Button
@@ -300,8 +316,8 @@ const Profile: React.FC = () => {
                                         ファイルのサイズが1Mより小さいjpg/jpeg, png画像ファイルを選び、アップロードしてください。
                                     </Typography>
                                     <div className={customStyles.thumbnail_edit_wrapper}>
-                                        {editedProfile.imageFile ?
-                                            <Avatar variant="rounded" src={editedProfile.imageFile} className={classes.uploadedAvatar} alt="thumbnail" /> :
+                                        {editedThumbnail.imageFile ?
+                                            <Avatar variant="rounded" src={editedThumbnail.imageFile} className={classes.uploadedAvatar} alt="thumbnail" /> :
                                             <Avatar variant="rounded" src={`${process.env.PUBLIC_URL}/assets/AppIcon_1024_1024.png`} className={classes.uploadedAvatar} alt="thumbnail" />
                                         }
                                     </div>
@@ -316,7 +332,7 @@ const Profile: React.FC = () => {
                                     <Button autoFocus onClick={handleEditThumbnail} color="primary">
                                         アップロード
                                     </Button>
-                                    <Button onClick={handleClose} color="primary">
+                                    <Button onClick={saveThumbnailAction} color="primary">
                                         保存
                                     </Button>
                                 </DialogActions>

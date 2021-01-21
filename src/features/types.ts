@@ -24,11 +24,15 @@ export interface JWT {
 export interface POST_PROFILE {
     id: number;
     username: string;
-    imageFile: string;
     sex: number;
     birth: number;
     country: string;
     lang: string;
+}
+
+export interface POST_THUMBNAIL {
+    id: number;
+    imageFile: string;
 }
 
 export interface USER {
@@ -48,6 +52,7 @@ export interface AUTH_USER_STATE {
     isLoading: boolean;
     user: USER;
     editedProfile: POST_PROFILE;
+    editedThumbnail: POST_THUMBNAIL;
 }
 
 /* spotsSlice */
