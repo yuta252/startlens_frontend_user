@@ -16,6 +16,7 @@ import {
     DialogTitle,
     Grid,
     Paper,
+    Snackbar,
     Table,
     TableBody,
     TableCell,
@@ -25,6 +26,7 @@ import {
     Typography
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { Rating } from '@material-ui/lab';
 
 import { AppDispatch } from '../../../app/store';
@@ -48,6 +50,10 @@ import commonStyles from '../../../assets/Style.module.css';
 import customStyles from './Top.module.css';
 import { POST_REVIEW, READ_EXHIBIT } from '../../types';
 
+
+function Alert(props: AlertProps) {
+    return <MuiAlert elevation={5} variant="filled" {...props} />;
+}
 
 const useStyles = makeStyles((theme: Theme) => ({
     paper: {
@@ -105,6 +111,8 @@ const SpotDetail: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
 
     const [open, setOpen] = useState(false);
+    const [snackOpen, setSnackOpen] = useState(false);
+    const [message, setMessage] = useState<{type: "success" | "error", message: string}>({type: "success", message: ""});
     const [postReview, setPostReview] = useState({ postReview: "", rating: 0 })
 
     const selectedSpot = useSelector(selectSelectedSpot);
@@ -143,6 +151,13 @@ const SpotDetail: React.FC = () => {
         setOpen(false);
     }
 
+    const handleMessageClose = (event?: React.SyntheticEvent, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setSnackOpen(false);
+    }
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         const name = e.target.name;
@@ -156,15 +171,18 @@ const SpotDetail: React.FC = () => {
 
     const createReviewAction = async () => {
         const postContent: POST_REVIEW = {...postReview, userId: selectedSpot.id, lang: user.lang}
-        console.log("postContent", postContent)
         const result = await dispatch(fetchAsyncCreateReview(postContent));
         if (fetchAsyncCreateReview.rejected.match(result)) {
-            console.log("failed to post review");
+            setMessage({type: "error", message: "レビューの投稿に失敗しました"});
+            setSnackOpen(true);
+            setOpen(false);
             return false
         }
         if (fetchAsyncCreateReview.fulfilled.match(result)) {
-            console.log("success to post review");
+            setMessage({type: "success", message: "レビューの投稿に成功しました"});
+            setSnackOpen(true);
             setOpen(false);
+            setPostReview({ postReview: "", rating: 0 });
         }
     }
 
@@ -226,9 +244,9 @@ const SpotDetail: React.FC = () => {
                                     評価とレビューを投稿してください
                                 </DialogContentText>
                                 <div className={commonStyles.spacer__medium} />
-                                <Rating className={classes.rating} 
-                                    value={postReview.rating} 
-                                    name="rating" 
+                                <Rating className={classes.rating}
+                                    value={postReview.rating}
+                                    name="rating"
                                     onChange={(event, newValue) => setPostReview({...postReview, rating: Number(newValue)})}
                                 />
                                 <div className={commonStyles.spacer__small} />
@@ -257,6 +275,11 @@ const SpotDetail: React.FC = () => {
                                 </Button>
                             </DialogActions>
                         </Dialog>
+                        <Snackbar open={snackOpen} autoHideDuration={4000} onClose={handleMessageClose}>
+                            <Alert onClose={handleClose} severity={message.type}>
+                                {message.message}
+                            </Alert>
+                        </Snackbar>
                     </div>
                     { selectedSpot.reviews[0] ? (
                             <div className={customStyles.review_content_wrapper}>

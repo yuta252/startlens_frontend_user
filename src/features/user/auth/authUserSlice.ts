@@ -9,6 +9,7 @@ import {
     ERROR_RESPONSE,
     JWT,
     POST_PROFILE,
+    POST_THUMBNAIL,
     USER,
 } from "../../types";
 
@@ -63,13 +64,28 @@ export const fetchAsyncGetUserInfo = createAsyncThunk(
 export const fetchAsyncUpdateProfile = createAsyncThunk(
     "authUser/updateProfile",
     async (profile: POST_PROFILE) => {
-        console.log("fetchUpdate", profile)
         const {id, ...postProfile} = profile
-        console.log(profile)
-        console.log(profile.id)
         const res = await axios.patch<USER>(
             `${process.env.REACT_APP_API_URL}/api/v1/tourist/tourists/${profile.id}`,
             { "tourist": postProfile },
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `${localStorage.startlensJWT}`,
+                },
+            }
+        );
+        return res.data
+    }
+);
+
+export const fetchAsyncUpdateThumbnail = createAsyncThunk(
+    "authUser/updateThumbnail",
+    async (profile: POST_THUMBNAIL) => {
+        const {id, ...postThumbnail} = profile
+        const res = await axios.patch<USER>(
+            `${process.env.REACT_APP_API_URL}/api/v1/tourist/tourists/${profile.id}`,
+            { "tourist": postThumbnail },
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -102,11 +118,14 @@ const initialState: AUTH_USER_STATE = {
     editedProfile: {
         id: 0,
         username: "",
-        imageFile: "",
         sex: 0,
         birth: 0,
         country: "",
         lang: ""
+    },
+    editedThumbnail: {
+        id: 0,
+        imageFile: ""
     }
 };
 
@@ -125,6 +144,9 @@ export const authUserSlice = createSlice({
         },
         editProfile(state, action: PayloadAction<POST_PROFILE>) {
             state.editedProfile = action.payload;
+        },
+        editThumbnail(state, action: PayloadAction<POST_THUMBNAIL>) {
+            state.editedThumbnail = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -148,7 +170,8 @@ export const authUserSlice = createSlice({
                 return {
                     ...state,
                     user: action.payload,
-                    editedProfile: {...state.editedProfile, id: action.payload.id}
+                    editedProfile: {...state.editedProfile, id: action.payload.id},
+                    editedThumbnail: {...state.editedThumbnail, id: action.payload.id}
                 }
             }
         );
@@ -161,15 +184,25 @@ export const authUserSlice = createSlice({
                 }
             }
         );
+        builder.addCase(
+            fetchAsyncUpdateThumbnail.fulfilled,
+            (state, action: PayloadAction<USER>) => {
+                return {
+                    ...state,
+                    user: action.payload
+                }
+            }
+        );
     },
 });
 
-export const { toggleMode, showError, toggleLoading, editProfile } = authUserSlice.actions;
+export const { toggleMode, showError, toggleLoading, editProfile, editThumbnail } = authUserSlice.actions;
 
 export const selectIsLoginView = (state: RootState) => state.authUser.isLoginView;
 export const selectError = (state: RootState) => state.authUser.error;
 export const selectIsLoading = (state: RootState) => state.authUser.isLoading;
 export const selectUser = (state: RootState) => state.authUser.user;
 export const selectEditedProfile = (state: RootState) => state.authUser.editedProfile;
+export const selectEditedThumbnail = (state: RootState) => state.authUser.editedThumbnail;
 
 export default authUserSlice.reducer;

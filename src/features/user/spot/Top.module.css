@@ -116,3 +116,7 @@
     display: flex;
     justify-content: space-between;
 }
+
+.about_page_wrapper {
+    padding: 32px;
+}
