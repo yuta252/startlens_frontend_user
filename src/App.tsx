@@ -29,7 +29,7 @@ const chooseLocaleData = (locale: string) => {
         case 'en':
             return en
         default:
-            return ja
+            return en
     }
 }
 
@@ -40,7 +40,8 @@ const useStyles = makeStyles( (theme) => ({
     },
     appBarSpacer: theme.mixins.toolbar,
     content: {
-        height: '100vh',
+        minHeight: '100vh',
+        height: 'auto',
         overflow: 'auto',
     },
 }));

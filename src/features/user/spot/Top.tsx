@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useDispatch } from "react-redux";
 import { useHistory } from 'react-router-dom';
 
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import {
     Button,
@@ -22,7 +24,15 @@ import {
     fetchAsyncGetSpots
 } from './spotSlice';
 import SpotCard from './SpotCard';
-import { countryCategoryObj, majorCategoryChipObj } from '../../../app/constant';
+import {
+    countryCategoryChubuItem,
+    countryCategoryChugokuItem,
+    countryCategoryKansaiItem,
+    countryCategoryKantoItem,
+    countryCategoryKyusyuItem,
+    countryCategoryTohokuItem,
+    majorCategoryChipItem
+} from '../../../app/constant';
 import customStyles from './Top.module.css';
 
 
@@ -79,7 +89,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         color: "white",
         fontWeight: theme.typography.fontWeightBold,
         width: '80px',
-        marginLeft: '16px'
+        marginLeft: '16px',
+        textTransform: 'none',
     },
     countryContent: {
         padding: theme.spacing(1),
@@ -192,6 +203,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 
 const Top: React.FC = () => {
+    const intl = useIntl();
     const classes = useStyles();
     const dispatch: AppDispatch = useDispatch();
     const history = useHistory();
@@ -239,8 +251,12 @@ const Top: React.FC = () => {
                 <div className={customStyles.top_title_wrapper}>
                     <Typography variant="h4" className={classes.title}>Let's start on a journey online</Typography>
                     <div className={customStyles.top_subtitle_wrapper}>
-                        <Typography variant="subtitle1" className={classes.title}>オンラインから目的地を探して観光をするサイト</Typography>
-                        <Typography variant="subtitle1" className={classes.title}>それがStartlensです</Typography>
+                        <Typography variant="subtitle1" className={classes.title}>
+                            <FormattedMessage id="top.subTitle1" defaultMessage="A new journey starting online" />
+                        </Typography>
+                        <Typography variant="subtitle1" className={classes.title}>
+                            <FormattedMessage id="top.subTitle2" defaultMessage="It's Startlens" />
+                        </Typography>
                     </div>
                 </div>
                 <Paper className={classes.paper}>
@@ -258,139 +274,139 @@ const Top: React.FC = () => {
                         onClick={searchQueryAction}
                         disableElevation
                     >
-                        検索
+                        <FormattedMessage id="top.searchButton" defaultMessage="Search" />
                     </Button>
                 </Paper>
             </div>
             <Container maxWidth="md">
                 <div>
-                    <Typography variant="h6">場所から探す</Typography>
+                    <Typography variant="h6"><FormattedMessage id="country.searchTitle" defaultMessage="Search by location" /></Typography>
                     <Grid container>
                         <Grid item xs={12} sm={3} className={classes.countryContent}>
-                            <Link variant="button" onClick={ () => searchCountryAction("東京")}>
+                            <Link variant="button" onClick={ () => searchCountryAction(intl.formatMessage({ id: "country.tokyo", defaultMessage: "Tokyo" }))}>
                                 <div className={classes.imageTokyo}></div>
                                 <div className={classes.imageCountryCover}></div>
-                                <div className={classes.imageCountryText}>東京</div>
+                                <div className={classes.imageCountryText}><FormattedMessage id="country.tokyo" defaultMessage="Tokyo" /></div>
                             </Link>
                         </Grid>
                         <Grid item xs={12} sm={3} className={classes.countryContent}>
-                            <Link variant="button" onClick={ () => searchCountryAction("大阪")}>
+                            <Link variant="button" onClick={ () => searchCountryAction(intl.formatMessage({ id: "country.osaka", defaultMessage: "Osaka" }))}>
                                 <div className={classes.imageOsaka}></div>
                                 <div className={classes.imageCountryCover}></div>
-                                <div className={classes.imageCountryText}>大阪</div>
+                                <div className={classes.imageCountryText}><FormattedMessage id="country.osaka" defaultMessage="Osaka" /></div>
                             </Link>
                         </Grid>
                         <Grid item xs={12} sm={3} className={classes.countryContent}>
-                            <Link variant="button" onClick={ () => searchCountryAction("京都")}>
+                            <Link variant="button" onClick={ () => searchCountryAction(intl.formatMessage({ id: "country.kyoto", defaultMessage: "Kyoto" }))}>
                                 <div className={classes.imageKyoto}></div>
                                 <div className={classes.imageCountryCover}></div>
-                                <div className={classes.imageCountryText}>京都</div>
+                                <div className={classes.imageCountryText}><FormattedMessage id="country.kyoto" defaultMessage="Kyoto" /></div>
                             </Link>
                         </Grid>
                         <Grid item xs={12} sm={3} className={classes.countryContent}>
-                            <Link variant="button" onClick={ () => searchCountryAction("名古屋")}>
+                            <Link variant="button" onClick={ () => searchCountryAction(intl.formatMessage({ id: "country.aichi", defaultMessage: "Aichi" }))}>
                                 <div className={classes.imageNagoya}></div>
                                 <div className={classes.imageCountryCover}></div>
-                                <div className={classes.imageCountryText}>名古屋</div>
+                                <div className={classes.imageCountryText}><FormattedMessage id="country.aichi" defaultMessage="Aichi" /></div>
                             </Link>
                         </Grid>
                     </Grid>
                 </div>
                 <div className={customStyles.other_area_wrapper}>
-                    <Typography variant="subtitle1">その他の場所</Typography>
+                    <Typography variant="subtitle1"><FormattedMessage id="country.titleOther" defaultMessage="Other places" /></Typography>
                     <Grid container>
                         <Grid item xs={4} sm={2} className={classes.countryContent}>
-                            <Typography variant="subtitle2"><strong>北海道・東北</strong></Typography>
+                            <Typography variant="subtitle2"><strong><FormattedMessage id="country.titleHokkaido" defaultMessage="Hokkaido / Tohoku"/></strong></Typography>
                             <ul className={customStyles.other_area_list}>
-                                {countryCategoryObj.tohoku.map( (country, index) =>
-                                    <li key={index}><Link variant="body2" color="secondary" onClick={ () => searchCountryAction(country)}>{country}</Link></li>
+                                {countryCategoryTohokuItem.map( (item, index) =>
+                                    <li key={index}><Link variant="body2" color="secondary" onClick={ () => searchCountryAction(intl.formatMessage({ id: item.id, defaultMessage: item.default }))}>{intl.formatMessage({ id: item.id, defaultMessage: item.default })}</Link></li>
                                 )}
                             </ul>
                         </Grid>
                         <Grid item xs={4} sm={2} className={classes.countryContent}>
-                            <Typography variant="subtitle2"><strong>関東</strong></Typography>
+                            <Typography variant="subtitle2"><strong><FormattedMessage id="country.titleKanto" defaultMessage="Kanto"/></strong></Typography>
                             <ul className={customStyles.other_area_list}>
-                                {countryCategoryObj.kanto.map( (country, index) =>
-                                    <li key={index}><Link variant="body2" color="secondary" onClick={ () => searchCountryAction(country)}>{country}</Link></li>
+                                {countryCategoryKantoItem.map( (item, index) =>
+                                    <li key={index}><Link variant="body2" color="secondary" onClick={ () => searchCountryAction(intl.formatMessage({ id: item.id, defaultMessage: item.default }))}>{intl.formatMessage({ id: item.id, defaultMessage: item.default })}</Link></li>
                                 )}
                             </ul>
                         </Grid>
                         <Grid item xs={4} sm={2} className={classes.countryContent}>
-                            <Typography variant="subtitle2"><strong>中部</strong></Typography>
+                            <Typography variant="subtitle2"><strong><FormattedMessage id="country.titleChubu" defaultMessage="Chubu"/></strong></Typography>
                             <ul className={customStyles.other_area_list}>
-                                {countryCategoryObj.chubu.map( (country, index) =>
-                                    <li key={index}><Link variant="body2" color="secondary" onClick={ () => searchCountryAction(country)}>{country}</Link></li>
+                                {countryCategoryChubuItem.map( (item, index) =>
+                                    <li key={index}><Link variant="body2" color="secondary" onClick={ () => searchCountryAction(intl.formatMessage({ id: item.id, defaultMessage: item.default }))}>{intl.formatMessage({ id: item.id, defaultMessage: item.default })}</Link></li>
                                 )}
                             </ul>
                         </Grid>
                         <Grid item xs={4} sm={2} className={classes.countryContent}>
-                            <Typography variant="subtitle2"><strong>関西</strong></Typography>
+                            <Typography variant="subtitle2"><strong><FormattedMessage id="country.titleKansai" defaultMessage="Kansai"/></strong></Typography>
                             <ul className={customStyles.other_area_list}>
-                                {countryCategoryObj.kansai.map( (country, index) =>
-                                    <li key={index}><Link variant="body2" color="secondary" onClick={ () => searchCountryAction(country)}>{country}</Link></li>
+                                {countryCategoryKansaiItem.map( (item, index) =>
+                                    <li key={index}><Link variant="body2" color="secondary" onClick={ () => searchCountryAction(intl.formatMessage({ id: item.id, defaultMessage: item.default }))}>{intl.formatMessage({ id: item.id, defaultMessage: item.default })}</Link></li>
                                 )}
                             </ul>
                         </Grid>
                         <Grid item xs={4} sm={2} className={classes.countryContent}>
-                            <Typography variant="subtitle2"><strong>中国・四国</strong></Typography>
+                            <Typography variant="subtitle2"><strong><FormattedMessage id="country.titleChugoku" defaultMessage="Chugoku / Shikoku"/></strong></Typography>
                             <ul className={customStyles.other_area_list}>
-                                {countryCategoryObj.chuboku.map( (country, index) =>
-                                    <li key={index}><Link variant="body2" color="secondary" onClick={ () => searchCountryAction(country)}>{country}</Link></li>
+                                {countryCategoryChugokuItem.map( (item, index) =>
+                                    <li key={index}><Link variant="body2" color="secondary" onClick={ () => searchCountryAction(intl.formatMessage({ id: item.id, defaultMessage: item.default }))}>{intl.formatMessage({ id: item.id, defaultMessage: item.default })}</Link></li>
                                 )}
                             </ul>
                         </Grid>
                         <Grid item xs={4} sm={2} className={classes.countryContent}>
-                            <Typography variant="subtitle2"><strong>九州</strong></Typography>
+                            <Typography variant="subtitle2"><strong><FormattedMessage id="country.titleKyusyu" defaultMessage="Kyusyu / Okinawa"/></strong></Typography>
                             <ul className={customStyles.other_area_list}>
-                                {countryCategoryObj.kyusyu.map( (country, index) =>
-                                    <li key={index}><Link variant="body2" color="secondary" onClick={ () => searchCountryAction(country)}>{country}</Link></li>
+                                {countryCategoryKyusyuItem.map( (item, index) =>
+                                    <li key={index}><Link variant="body2" color="secondary" onClick={ () => searchCountryAction(intl.formatMessage({ id: item.id, defaultMessage: item.default }))}>{intl.formatMessage({ id: item.id, defaultMessage: item.default })}</Link></li>
                                 )}
                             </ul>
                         </Grid>
                     </Grid>
                 </div>
                 <div className={customStyles.category_content_wrapper}>
-                    <Typography variant="h6">カテゴリーから探す</Typography>
+                    <Typography variant="h6"><FormattedMessage id="category.searchTitle" defaultMessage="Search by category" /></Typography>
                     <Grid container>
                         <Grid item xs={12} sm={3} className={classes.countryContent}>
                             <Link variant="button" onClick={ () => searchCategoryAction(22)}>
                                 <div className={classes.imageTemple}></div>
                                 <div className={classes.imageCountryCover}></div>
-                                <div className={classes.imageCountryText}>神社・寺院・教会</div>
+                                <div className={classes.imageCountryText}><FormattedMessage id="category.religiousBuilding" defaultMessage="Religious building" /></div>
                             </Link>
                         </Grid>
                         <Grid item xs={12} sm={3} className={classes.countryContent}>
                             <Link variant="button" onClick={ () => searchCategoryAction(31)}>
                                 <div className={classes.imageThemePark}></div>
                                 <div className={classes.imageCountryCover}></div>
-                                <div className={classes.imageCountryText}>テーマ施設</div>
+                                <div className={classes.imageCountryText}><FormattedMessage id="category.themePark" defaultMessage="Theme park" /></div>
                             </Link>
                         </Grid>
                         <Grid item xs={12} sm={3} className={classes.countryContent}>
                             <Link variant="button" onClick={ () => searchCategoryAction(27)}>
                                 <div className={classes.imageBuilding}></div>
                                 <div className={classes.imageCountryCover}></div>
-                                <div className={classes.imageCountryText}>建造物</div>
+                                <div className={classes.imageCountryText}><FormattedMessage id="category.building" defaultMessage="Building" /></div>
                             </Link>
                         </Grid>
                         <Grid item xs={12} sm={3} className={classes.countryContent}>
                             <Link variant="button" onClick={ () => searchCategoryAction(32) }>
                                 <div className={classes.imageHotSpring}></div>
                                 <div className={classes.imageCountryCover}></div>
-                                <div className={classes.imageCountryText}>温泉</div>
+                                <div className={classes.imageCountryText}><FormattedMessage id="category.hotSpring" defaultMessage="Hot spring" /></div>
                             </Link>
                         </Grid>
                         <div className={customStyles.other_category_wrapper}>
-                            {Object.keys(majorCategoryChipObj).map( (key) => (
-                                Number(key) !== 0 && (
-                                    <Chip key={key} label={`${majorCategoryChipObj[Number(key)]}`} variant="outlined" onClick={ () => searchCategoryAction(Number(key)) } className={classes.chip}/>
+                            {majorCategoryChipItem.map( (item) => (
+                                Number(item.key) !== 0 && (
+                                    <Chip key={item.key} label={intl.formatMessage({ id: item.id, defaultMessage: item.default })} variant="outlined" onClick={ () => searchCategoryAction(Number(item.key)) } className={classes.chip}/>
                                 )
                             ))}
                         </div>
                     </Grid>
                 </div>
                 <div className={customStyles.category_content_wrapper}>
-                    <Typography variant="h6">新着情報</Typography>
+                    <Typography variant="h6"><FormattedMessage id="newInfo.title" defaultMessage="New Information" /></Typography>
                     <div className={customStyles.new_spot_wrapper}>
                         <SpotCard />
                     </div>
@@ -400,4 +416,5 @@ const Top: React.FC = () => {
     )
 }
 
-export default Top
+
+export default Top;

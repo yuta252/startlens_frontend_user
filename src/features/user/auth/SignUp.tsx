@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import {
@@ -57,6 +58,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         padding: theme.spacing(1),
         color: "white",
         fontWeight: theme.typography.fontWeightBold,
+        textTransform: 'none',
     },
     snackbar: {
         width: "93%"
@@ -79,6 +81,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 
 const SignUp: React.FC = () => {
+    const intl = useIntl();
     const classes = useStyles();
     const dispatch: AppDispatch = useDispatch();
 
@@ -96,18 +99,17 @@ const SignUp: React.FC = () => {
     const signUp = async () => {
         // Validation
         if (credential.email === "" || credential.password === "") {
-            dispatch(showError({ isError: true, message: "メールアドレスまたはパスワードが未入力です" }))
+            dispatch(showError({ isError: true, message: intl.formatMessage({ id: 'signIn.validation.email', defaultMessage: "Email address and password is required" }) }))
             return false
         }
 
         if (credential.password !== credential.confirmPassword) {
-            dispatch(showError({ isError: true, message: "入力された確認パスワードが一致しません。" }))
+            dispatch(showError({ isError: true, message: intl.formatMessage({ id: 'signIn.validation.password', defaultMessage: "The confirmation password entered doesn't match" }) }))
             return false
         }
 
         dispatch(toggleLoading());
         const result = await dispatch(fetchAsyncRegister({ email: credential.email, password: credential.password }));
-        // TODO: サーバーのバリデーションハンドリング
         if (fetchAsyncRegister.rejected.match(result)) {
             console.log(result)
             dispatch(toggleLoading());
@@ -128,13 +130,13 @@ const SignUp: React.FC = () => {
                     { isLoading && <CircularProgress /> }
                     <Avatar variant="rounded" src={`${process.env.PUBLIC_URL}/assets/AppIcon_1024_1024.png`} className={classes.avatar} alt="logo" />
                     <Typography variant="h5" className={classes.title} >
-                        新規登録
+                        <FormattedMessage id="signUp.title" defaultMessage="Sign up" />
                     </Typography>
                     <div className={commonStyles.spacer__medium}></div>
                     <TextField
                         variant="outlined"
                         fullWidth
-                        label="メールアドレス"
+                        label={intl.formatMessage({ id: 'signIn.mail', defaultMessage: "Email address" })}
                         type="text"
                         name="email"
                         value={credential.email}
@@ -145,7 +147,7 @@ const SignUp: React.FC = () => {
                     <TextField
                         variant="outlined"
                         fullWidth
-                        label="パスワード"
+                        label={intl.formatMessage({ id: 'signIn.password', defaultMessage: "Password" })}
                         type="password"
                         name="password"
                         value={credential.password}
@@ -155,7 +157,7 @@ const SignUp: React.FC = () => {
                     <TextField
                         variant="outlined"
                         fullWidth
-                        label="確認用パスワード"
+                        label={intl.formatMessage({ id: 'signIn.confirmationPassword', defaultMessage: "Confirmation password" })}
                         type="password"
                         name="confirmPassword"
                         value={credential.confirmPassword}
@@ -170,11 +172,11 @@ const SignUp: React.FC = () => {
                         className={classes.submit}
                         onClick={signUp}
                     >
-                        新規登録
+                        <FormattedMessage id="signUp.registerButton" defaultMessage="Sign in" />
                     </Button>
                     <div className={commonStyles.divider__small} />
                     <Link href="./signin" variant="body2" color="secondary">
-                        ログイン画面へ
+                        <FormattedMessage id="signIn.moveSignIn" defaultMessage="Link to Sign in" />
                     </Link>
                 </div>
             </Grid>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import {
@@ -57,6 +58,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         padding: theme.spacing(1),
         color: "white",
         fontWeight: theme.typography.fontWeightBold,
+        textTransform: 'none',
     },
     snackbar: {
         width: "93%"
@@ -79,6 +81,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 
 const SignIn: React.FC = () => {
+    const intl = useIntl();
     const classes = useStyles();
     const dispatch: AppDispatch = useDispatch();
     const error = useSelector(selectError);
@@ -95,16 +98,15 @@ const SignIn: React.FC = () => {
     const signIn = async () => {
         // Validation
         if (credential.email === "" || credential.password === "") {
-            dispatch(showError({ isError: true, message: "メールアドレスまたはパスワードが未入力です" }))
+            dispatch(showError({ isError: true, message: intl.formatMessage({ id: 'signIn.validation.email', defaultMessage: "Email address and password is required" }) }))
             return false
         }
         dispatch(toggleLoading());
         const result = await dispatch(fetchAsyncLogin(credential));;
-        // TODO: サーバーでのレスポンスエラー処理
         if (fetchAsyncLogin.rejected.match(result)) {
             console.log(result)
             dispatch(toggleLoading());
-            dispatch(showError({ isError: true, message: "メールアドレスまたはパスワードに誤りがあります。" }))
+            dispatch(showError({ isError: true, message: intl.formatMessage({ id: 'signIn.validation.serverError', defaultMessage: "Email address or password is wrong" }) }))
             return false
         }
         if (fetchAsyncLogin.fulfilled.match(result)) {
@@ -122,13 +124,13 @@ const SignIn: React.FC = () => {
                     { isLoading && <CircularProgress /> }
                     <Avatar variant="rounded" src={`${process.env.PUBLIC_URL}/assets/AppIcon_1024_1024.png`} className={classes.avatar} alt="logo" />
                     <Typography variant="h5" className={classes.title} >
-                        ログイン
+                        <FormattedMessage id="signIn.title" defaultMessage="Sign in" />
                     </Typography>
                     <div className={commonStyles.spacer__medium}></div>
                     <TextField
                         variant="outlined"
                         fullWidth
-                        label="メールアドレス"
+                        label={intl.formatMessage({ id: 'signIn.mail', defaultMessage: "Email address" })}
                         type="text"
                         name="email"
                         value={credential.email}
@@ -139,7 +141,7 @@ const SignIn: React.FC = () => {
                     <TextField
                         variant="outlined"
                         fullWidth
-                        label="パスワード"
+                        label={intl.formatMessage({ id: 'signIn.password', defaultMessage: "Password" })}
                         type="password"
                         name="password"
                         value={credential.password}
@@ -154,15 +156,15 @@ const SignIn: React.FC = () => {
                         className={classes.submit}
                         onClick={signIn}
                     >
-                        ログイン
+                        <FormattedMessage id="signUp.LoginButton" defaultMessage="Sign in" />
                     </Button>
                     <Alert severity="info" className={classes.snackbar}>
-                        <AlertTitle>デモアカウント</AlertTitle>
+                        <AlertTitle><FormattedMessage id="signIn.demoAccount" defaultMessage="Demo account" /></AlertTitle>
                         Email:<strong>info@startlens.com</strong>, Password: <strong>startlens</strong>
                     </Alert>
                     <div className={commonStyles.divider__small} />
                     <Link href="./signup" variant="body2" color="secondary">
-                        アカウントを新規で登録する
+                        <FormattedMessage id="signIn.moveSignUp" defaultMessage="Register a new account" />
                     </Link>
                 </div>
             </Grid>

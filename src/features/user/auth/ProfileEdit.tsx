@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from 'react-router-dom';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import {
     Avatar,
     Button,
     Container,
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -24,17 +26,20 @@ import { AppDispatch } from '../../../app/store';
 import {
     editProfile,
     editThumbnail,
-    fetchAsyncGetUserInfo,
     fetchAsyncUpdateProfile,
     fetchAsyncUpdateThumbnail,
     selectEditedProfile,
     selectEditedThumbnail,
     selectUser
 } from './authUserSlice';
-import { POST_PROFILE } from '../../types';
 import commonStyles from '../../../assets/Style.module.css';
 import customStyles from './Auth.module.css';
-import { birthCategoryObj, langCategoryObj, sexCategoryObj, worldCountryObj } from '../../../app/constant';
+import {
+    birthCategoryObj,
+    langItem,
+    sexItem,
+    worldItem
+} from '../../../app/constant';
 
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -43,7 +48,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         padding: theme.spacing(4)
     },
     title: {
-        textAlign: 'center'
+        textAlign: 'center',
+        textTransform: 'none',
     },
     nextStepButton: {
         color: '#fff',
@@ -58,13 +64,17 @@ const useStyles = makeStyles((theme: Theme) => ({
         width: '200px',
         height: '200px',
     },
+    uploadButton: {
+        textTransform: 'none',
+    },
     textField: {
         width: '400px'
     },
     editPictureButton: {
-        width: "140px",
+        width: "200px",
         color: "white",
         fontWeight: theme.typography.fontWeightBold,
+        textTransform: 'none',
     },
     uploadedAvatar: {
         margin: theme.spacing(2),
@@ -72,27 +82,32 @@ const useStyles = makeStyles((theme: Theme) => ({
         width: '300px',
         height: '300px',
     },
+    backButton: {
+        textTransform: 'none',
+    }
 }));
 
 
 const ProfileEdit: React.FC = () => {
+    const intl = useIntl();
     const classes = useStyles();
     const dispatch: AppDispatch = useDispatch();
     const history = useHistory();
     const handleLink = (path: string) => history.push(path);
 
-    const selectedUser = useSelector(selectUser);
     const editedProfile = useSelector(selectEditedProfile);
     const editedThumbnail = useSelector(selectEditedThumbnail);
     const user = useSelector(selectUser);
 
     const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [active, setActive] = useState(false);
 
     useEffect( () => {
         const { email, thumbnailUrl, ...restProfile } = user;
         dispatch(editProfile({...restProfile}));
         dispatch(editThumbnail({id: user.id, imageFile: thumbnailUrl}));
-    }, []);
+    }, [dispatch]);
 
     const isDisabledProfile = (editedProfile.lang.length === 0 || editedProfile.username.length === 0 ||
                             editedProfile.birth === 0 || editedProfile.sex === 0 || editedProfile.country === "na")
@@ -136,15 +151,15 @@ const ProfileEdit: React.FC = () => {
         dispatch(editProfile({...editedProfile, country: value}))
     };
 
-    let langOptions = Object.keys(langCategoryObj).map( (key) => (
-        <MenuItem key={key} value={key}>
-            {langCategoryObj[key]}
+    let langOptions = langItem.map( (item) => (
+        <MenuItem key={item.key} value={item.key}>
+            {intl.formatMessage({ id: item.id, defaultMessage: item.default })}
         </MenuItem>
     ));
 
-    let sexOptions = Object.keys(sexCategoryObj).map( (key) => (
-        <MenuItem key={key} value={key}>
-            {sexCategoryObj[Number(key)]}
+    let sexOptions = sexItem.map( (item) => (
+        <MenuItem key={item.key} value={item.key}>
+            {intl.formatMessage({ id: item.id, defaultMessage: item.default })}
         </MenuItem>
     ));
 
@@ -154,9 +169,9 @@ const ProfileEdit: React.FC = () => {
         </MenuItem>
     ));
 
-    let worldCountryOptions = Object.keys(worldCountryObj).map( (key) => (
-        <MenuItem key={key} value={key}>
-            {worldCountryObj[key]}
+    let worldCountryOptions = worldItem.map( (item) => (
+        <MenuItem key={item.key} value={item.key}>
+            {intl.formatMessage({ id: item.id, defaultMessage: item.default })}
         </MenuItem>
     ));
 
@@ -204,22 +219,25 @@ const ProfileEdit: React.FC = () => {
     };
 
     const saveThumbnailAction = async () => {
+        setActive(true);
+        setLoading(true);
         const result = await dispatch(fetchAsyncUpdateThumbnail(editedThumbnail));
         if (fetchAsyncUpdateThumbnail.rejected.match(result)) {
-            console.log(result)
+            setActive(false);
+            setLoading(false);
+            handleClose();
             return false
         }
         if (fetchAsyncUpdateThumbnail.fulfilled.match(result)) {
-            console.log(result);
+            setActive(false);
+            setLoading(false);
             handleClose();
         }
     }
 
     const saveProfileAction = async () => {
-        console.log("editedProfile", editedProfile)
         const result = await dispatch(fetchAsyncUpdateProfile(editedProfile));
         if (fetchAsyncUpdateProfile.rejected.match(result)) {
-            console.log(result)
             return false
         }
         if (fetchAsyncUpdateProfile.fulfilled.match(result)) {
@@ -231,8 +249,9 @@ const ProfileEdit: React.FC = () => {
         <Container maxWidth="md">
             <Paper className={classes.paper}>
                 <div className={customStyles.profile_user_settings_wrapper}>
-                    <Typography variant="h6" className={classes.title}>プロフィール編集</Typography>
+                    <Typography variant="h6" className={classes.title}><FormattedMessage id="profile.edit.title" defaultMessage="Profile edit" /></Typography>
                     <div className={commonStyles.spacer__small} />
+                    { loading && <CircularProgress /> }
                     { editedThumbnail.imageFile ?
                         (<Avatar variant="rounded" src={editedThumbnail.imageFile} className={classes.avatar} alt="thumbnail" />)
                         : (<Avatar variant="rounded" src={`${process.env.PUBLIC_URL}/assets/AppIcon_1024_1024.png`} className={classes.avatar} alt="logo" />)
@@ -244,15 +263,15 @@ const ProfileEdit: React.FC = () => {
                         className={classes.editPictureButton}
                         disableElevation
                     >
-                        サムネイル画像
+                        <FormattedMessage id="profile.thumbnailButton" defaultMessage="Thumbnail image" />
                     </Button>
                     <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
                         <DialogTitle id="customized-dialog-title">
-                            画像を編集する
+                            <FormattedMessage id="profile.thumbnailTitle" defaultMessage="Edit thumbnail image" />
                         </DialogTitle>
                         <DialogContent dividers>
                             <Typography gutterBottom>
-                                ファイルのサイズが1Mより小さいjpg/jpeg, png画像ファイルを選び、アップロードしてください。
+                                <FormattedMessage id="profile.thumbnailSubTitle" defaultMessage="Select a jpg/jpeg, png image file whose file size is smaller than 1M and upload it." />
                             </Typography>
                             <div className={customStyles.thumbnail_edit_wrapper}>
                                 {editedThumbnail.imageFile ?
@@ -268,17 +287,17 @@ const ProfileEdit: React.FC = () => {
                             />
                         </DialogContent>
                         <DialogActions>
-                            <Button autoFocus onClick={handleEditThumbnail} color="primary">
-                                アップロード
+                            <Button autoFocus onClick={handleEditThumbnail} color="primary" className={classes.uploadButton}>
+                                <FormattedMessage id="profile.uploadButton" defaultMessage="Upload" />
                             </Button>
-                            <Button onClick={saveThumbnailAction} color="primary">
-                                保存
+                            <Button onClick={saveThumbnailAction} color="primary" className={classes.uploadButton} disabled={active}>
+                                <FormattedMessage id="profile.saveButton" defaultMessage="Save" />
                             </Button>
                         </DialogActions>
                     </Dialog>
                     <div className={commonStyles.spacer__medium} />
                     <FormControl className={classes.formControl}>
-                        <InputLabel id="language-select-label">Language</InputLabel>
+                        <InputLabel id="language-select-label"><FormattedMessage id="profile.form.lang" defaultMessage="Language" /></InputLabel>
                         <Select
                             labelId="language-select-label"
                             name="lang"
@@ -291,7 +310,7 @@ const ProfileEdit: React.FC = () => {
                     <div className={commonStyles.spacer__medium} />
                     <TextField
                         variant="outlined"
-                        label="ユーザーネーム"
+                        label={intl.formatMessage({ id: 'profile.username', defaultMessage: "Username" })}
                         type="text"
                         name="username"
                         value={editedProfile.username}
@@ -300,7 +319,7 @@ const ProfileEdit: React.FC = () => {
                     />
                     <div className={commonStyles.spacer__medium} />
                     <FormControl className={classes.formControl}>
-                        <InputLabel id="sex-select-label">性別</InputLabel>
+                        <InputLabel id="sex-select-label"><FormattedMessage id="profile.sex" defaultMessage="Sex" /></InputLabel>
                         <Select
                             labelId="sex-select-label"
                             name="sex"
@@ -312,7 +331,7 @@ const ProfileEdit: React.FC = () => {
                     </FormControl>
                     <div className={commonStyles.spacer__medium} />
                     <FormControl className={classes.formControl}>
-                        <InputLabel id="birth-select-label">生年</InputLabel>
+                        <InputLabel id="birth-select-label"><FormattedMessage id="profile.birth" defaultMessage="Birth year" /></InputLabel>
                         <Select
                             labelId="birth-select-label"
                             name="birth"
@@ -324,7 +343,7 @@ const ProfileEdit: React.FC = () => {
                     </FormControl>
                     <div className={commonStyles.spacer__medium} />
                     <FormControl className={classes.formControl}>
-                        <InputLabel id="country-select-label">国</InputLabel>
+                        <InputLabel id="country-select-label"><FormattedMessage id="profile.country" defaultMessage="Country" /></InputLabel>
                         <Select
                             labelId="country-select-label"
                             name="country"
@@ -338,10 +357,11 @@ const ProfileEdit: React.FC = () => {
                     <div className={customStyles.profile_settings_form}>
                         <Button
                             variant="outlined"
+                            className={classes.backButton}
                             onClick={() => handleLink('/')}
                             disableElevation
                         >
-                            戻る
+                            <FormattedMessage id="button.back" defaultMessage="Back" />
                         </Button>
                         <Button
                             variant="contained"
@@ -351,11 +371,10 @@ const ProfileEdit: React.FC = () => {
                             disabled={isDisabledProfile}
                             disableElevation
                         >
-                            登録
+                            <FormattedMessage id="button.register" defaultMessage="Register" />
                         </Button>
                     </div>
                 </div>
-
             </Paper>
         </Container>
     )

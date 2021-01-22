@@ -46,7 +46,7 @@
 
 .spot_table_head {
     text-align: left;
-    width: 90px;
+    width: 140px;
 }
 
 .like_btn_wrapper {
@@ -68,6 +68,11 @@
     margin: 24px 0;
     width: 100%;
     text-align: center;
+}
+
+.search_no_result_wrapper {
+    display: flex;
+    justify-content: center;
 }
 
 .spot_detail_subtitle_wrapper {
@@ -119,4 +124,10 @@
 
 .about_page_wrapper {
     padding: 32px;
+}
+
+.favorite_no_content_wrapper {
+    display: flex;
+    justify-self: center;
+    margin-top: 16px;
 }

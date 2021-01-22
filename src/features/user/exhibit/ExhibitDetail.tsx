@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import {
@@ -10,12 +10,15 @@ import {
     Typography
 } from '@material-ui/core';
 
-
 import {
     selectSelectedExhibit
 } from '../exhibit/exhibitSlice';
+import { selectUser } from '../auth/authUserSlice';
 import commonStyles from '../../../assets/Style.module.css';
-import customStyles from './Exhibit.module.css';
+import {
+    MULTI_EXHIBIT,
+    READ_EXHIBIT,
+} from '../../types';
 
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -39,13 +42,32 @@ const ExhibitDetail: React.FC = () => {
     const classes = useStyles();
 
     const selectedExhibit = useSelector(selectSelectedExhibit);
+    const user = useSelector(selectUser);
+    const lang = user.lang;
+
+    const selectMultiExhibitByLang = (exhibit: READ_EXHIBIT): MULTI_EXHIBIT => {
+        // select language selected by user at first. if not exists, go on default language en and then finally select ja.
+        let multiExhibit = exhibit.multiExhibits.filter( (multiExhibit) =>
+            multiExhibit.lang === lang
+        )
+        if (multiExhibit[0]) { return multiExhibit[0] }
+        multiExhibit = exhibit.multiExhibits.filter( (multiExhibit) =>
+            multiExhibit.lang === 'en'
+        )
+        if (multiExhibit[0]) { return multiExhibit[0] }
+        multiExhibit = exhibit.multiExhibits.filter( (multiExhibit) =>
+            multiExhibit.lang === 'ja'
+        )
+        if (multiExhibit[0]) { return multiExhibit[0] }
+        return exhibit.multiExhibits.slice(-1)[0];
+    }
 
     return (
         <Container maxWidth="md">
             <Paper className={classes.paper}>
-                <Typography variant="h4" color="textPrimary">{selectedExhibit.multiExhibits.slice(-1)[0].name}</Typography>
+                <Typography variant="h4" color="textPrimary">{selectMultiExhibitByLang(selectedExhibit).name}</Typography>
                 <div className={commonStyles.spacer__small} />
-                <Typography variant="body1" color="textSecondary">{selectedExhibit.multiExhibits.slice(-1)[0].description}</Typography>
+                <Typography variant="body1" color="textSecondary">{selectMultiExhibitByLang(selectedExhibit).description}</Typography>
                 <div className={commonStyles.spacer__small} />
                 <Grid container>
                     {selectedExhibit.pictures.map( (picture, index) => (
