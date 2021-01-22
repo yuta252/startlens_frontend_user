@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
+import { FormattedMessage } from 'react-intl';
 
 import {
     Avatar,
     Button,
     Card,
-    CardActions,
     CardContent,
     CardHeader,
-    CardMedia,
     Menu,
     MenuItem,
-    IconButton,
     Typography
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -36,6 +34,9 @@ const useStyles = makeStyles((theme: Theme) => ({
         marginLeft: theme.spacing(1),
         fontWeight: theme.typography.fontWeightBold,
     },
+    deleteButton: {
+        textTransform: 'none',
+    }
 }))
 
 
@@ -104,7 +105,12 @@ const ReviewList: React.FC = () => {
                                         open={Boolean(anchorEl)}
                                         onClose={handleClose}
                                     >
-                                        <MenuItem onClick={() => deleteReviewAction(review)}>削除</MenuItem>
+                                        <MenuItem
+                                            onClick={() => deleteReviewAction(review)}
+                                            className={classes.deleteButton}
+                                        >
+                                            <FormattedMessage id="button.delete" defaultMessage="Delete" />
+                                        </MenuItem>
                                     </Menu>
                                 </div>
                             )

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from 'react-router-dom';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import {
@@ -22,10 +23,13 @@ import {
     offFavorite,
     onFavorite,
     selectSpots,
-    selectSpot
+    selectSpot,
 } from './spotSlice';
-import { SPOT } from '../../types';
-import { majorCategoryChipObj } from '../../../app/constant';
+import {
+    selectUser
+} from '../auth/authUserSlice';
+import { SPOT, SPOT_MULTI_PROFILE } from '../../types';
+import { majorCategoryChipItem } from '../../../app/constant';
 import customStyles from './Top.module.css';
 
 
@@ -60,16 +64,46 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 
 const SpotCard: React.FC = () => {
+    const intl = useIntl();
     const classes = useStyles();
     const history = useHistory();
     const dispatch: AppDispatch = useDispatch();
     const handleLink = (path: string) => history.push(path);
 
     const spots = useSelector(selectSpots);
+    const user = useSelector(selectUser);
+    const lang = user.lang;
 
     const displaySpotAction = (spot: SPOT) => {
         dispatch(selectSpot(spot));
         handleLink('/spots/detail');
+    }
+
+    const selectMultiProfileByLang = (spot: SPOT): SPOT_MULTI_PROFILE => {
+        // select language selected by user at first. if not exists, go on default language en and then finally select ja.
+        let multiProfile = spot.multiProfiles.filter( (multiProfile) =>
+            multiProfile.lang === lang
+        )
+        if (multiProfile[0]) { return multiProfile[0] }
+        multiProfile = spot.multiProfiles.filter( (multiProfile) =>
+            multiProfile.lang === 'en'
+        )
+        if (multiProfile[0]) { return multiProfile[0] }
+        multiProfile = spot.multiProfiles.filter( (multiProfile) =>
+            multiProfile.lang === 'ja'
+        )
+        if (multiProfile[0]) { return multiProfile[0] }
+        return spot.multiProfiles.slice(-1)[0];
+    }
+
+    const getMajorCategoryID = (spot: SPOT): string => {
+        const majorCategory = spot.profile.majorCategory;
+        for (let i = 0; i < majorCategoryChipItem.length - 1; i++) {
+            if (majorCategoryChipItem[i].key === majorCategory) {
+                return majorCategoryChipItem[i].id
+            }
+        }
+        return 'category.unselected'
     }
 
     const favoriteClickAction = async (spot: SPOT) => {
@@ -98,28 +132,28 @@ const SpotCard: React.FC = () => {
                         </Grid>
                         <Grid item xs={12} sm={9} className={classes.spotContent}>
                             <Link onClick={ () => displaySpotAction(spot)} color="textSecondary">
-                                <Typography variant="h6" className={classes.spotTitle}>{ spot.multiProfiles.slice(-1)[0].username}</Typography>
+                                <Typography variant="h6" className={classes.spotTitle}>{ selectMultiProfileByLang(spot).username}</Typography>
                             </Link>
                             <div className={customStyles.spot_subtitle_wrapper}>
-                                <Chip label={`${majorCategoryChipObj[spot.profile.majorCategory]}`} variant="outlined" size="small"/>
+                                <Chip label={intl.formatMessage({ id: getMajorCategoryID(spot), defaultMessage: "Unselected" })} variant="outlined" size="small"/>
                                 <Rating className={classes.rating} value={spot.profile.rating} precision={0.5} readOnly />
                                 <Typography className={classes.ratingLabel} variant="h6" color="primary">{spot.profile.rating}</Typography>
                             </div>
-                            <Typography variant="body1" color="textSecondary">{spot.multiProfiles.slice(-1)[0].addressPrefecture + spot.multiProfiles.slice(-1)[0].addressCity + spot.multiProfiles.slice(-1)[0].addressStreet}</Typography>
+                            <Typography variant="body1" color="textSecondary">{selectMultiProfileByLang(spot).addressPrefecture + selectMultiProfileByLang(spot).addressCity + selectMultiProfileByLang(spot).addressStreet}</Typography>
                             <div>
                                 <table>
                                     <tbody>
                                         <tr>
-                                            <th className={customStyles.spot_table_head}><Typography variant="body2" color="textSecondary"><strong>料金</strong></Typography></th>
-                                            <td><Typography variant="body2" color="textSecondary">{spot.multiProfiles.slice(-1)[0].entranceFee}</Typography></td>
+                                            <th className={customStyles.spot_table_head}><Typography variant="body2" color="textSecondary"><strong><FormattedMessage id="spot.card.entranceFee" defaultMessage="Entrance fee" /></strong></Typography></th>
+                                            <td><Typography variant="body2" color="textSecondary">{selectMultiProfileByLang(spot).entranceFee}</Typography></td>
                                         </tr>
                                         <tr>
-                                        <th className={customStyles.spot_table_head}><Typography variant="body2" color="textSecondary"><strong>営業時間</strong></Typography></th>
-                                            <td><Typography variant="body2" color="textSecondary">{spot.multiProfiles.slice(-1)[0].businessHours}</Typography></td>
+                                            <th className={customStyles.spot_table_head}><Typography variant="body2" color="textSecondary"><strong><FormattedMessage id="spot.card.businessHour" defaultMessage="Business hour" /></strong></Typography></th>
+                                            <td><Typography variant="body2" color="textSecondary">{selectMultiProfileByLang(spot).businessHours}</Typography></td>
                                         </tr>
                                         <tr>
-                                        <th className={customStyles.spot_table_head}><Typography variant="body2" color="textSecondary"><strong>休日</strong></Typography></th>
-                                            <td><Typography variant="body2" color="textSecondary">{spot.multiProfiles.slice(-1)[0].holiday}</Typography></td>
+                                            <th className={customStyles.spot_table_head}><Typography variant="body2" color="textSecondary"><strong><FormattedMessage id="spot.card.holiday" defaultMessage="Holiday" /></strong></Typography></th>
+                                            <td><Typography variant="body2" color="textSecondary">{selectMultiProfileByLang(spot).holiday}</Typography></td>
                                         </tr>
                                     </tbody>
                                 </table>

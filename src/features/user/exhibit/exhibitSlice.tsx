@@ -4,7 +4,6 @@ import axios from "axios";
 import { RootState } from '../../../app/store';
 import {
     EXHIBIT_STATE,
-    MULTI_EXHIBIT,
     READ_EXHIBIT,
 } from "../../types";
 

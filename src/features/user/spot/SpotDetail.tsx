@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import {
@@ -20,7 +21,6 @@ import {
     Table,
     TableBody,
     TableCell,
-    TableHead,
     TableRow,
     TextField,
     Typography
@@ -45,10 +45,16 @@ import {
 } from './spotSlice';
 import GoogleMapComponent from './GoogleMapComponent';
 import ReviewList from './ReviewList';
-import { majorCategoryChipObj } from '../../../app/constant';
+import { majorCategoryChipItem } from '../../../app/constant';
 import commonStyles from '../../../assets/Style.module.css';
 import customStyles from './Top.module.css';
-import { POST_REVIEW, READ_EXHIBIT } from '../../types';
+import {
+    MULTI_EXHIBIT,
+    POST_REVIEW,
+    READ_EXHIBIT,
+    SPOT,
+    SPOT_MULTI_PROFILE
+} from '../../types';
 
 
 function Alert(props: AlertProps) {
@@ -101,10 +107,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     recommendTitle: {
         padding: theme.spacing(1)
+    },
+    postReviewButton: {
+        textTransform: 'none',
     }
 }))
 
 const SpotDetail: React.FC = () => {
+    const intl = useIntl();
     const classes = useStyles();
     const history = useHistory();
     const handleLink = (path: string) => history.push(path);
@@ -118,18 +128,9 @@ const SpotDetail: React.FC = () => {
     const selectedSpot = useSelector(selectSelectedSpot);
     const selectedExhibits = useSelector(selectExhibits);
     const user = useSelector(selectUser);
+    const lang = user.lang;
 
     const isDisabled: boolean = (postReview.postReview.length === 0 || !postReview.rating)
-
-    const tableContents = [
-        { title: "ユーザー名", content: selectedSpot.multiProfiles.slice(-1)[0].username},
-        { title: "場所", content: selectedSpot.multiProfiles.slice(-1)[0].addressPrefecture + selectedSpot.multiProfiles.slice(-1)[0].addressCity + selectedSpot.multiProfiles.slice(-1)[0].addressStreet},
-        { title: "料金", content: selectedSpot.multiProfiles.slice(-1)[0].entranceFee},
-        { title: "営業時間", content: selectedSpot.multiProfiles.slice(-1)[0].businessHours},
-        { title: "休日", content: selectedSpot.multiProfiles.slice(-1)[0].holiday},
-        { title: "電話番号", content: selectedSpot.profile.telephone},
-        { title: "ホームページ", content: selectedSpot.profile.companySite},
-    ]
 
     useEffect( () => {
         console.log("useEffect is called")
@@ -164,6 +165,50 @@ const SpotDetail: React.FC = () => {
         setPostReview({...postReview, [name]: value})
     };
 
+    const selectMultiProfileByLang = (spot: SPOT): SPOT_MULTI_PROFILE => {
+        // select language selected by user at first. if not exists, go on default language en and then finally select ja.
+        let multiProfile = spot.multiProfiles.filter( (multiProfile) =>
+            multiProfile.lang === lang
+        )
+        if (multiProfile[0]) { return multiProfile[0] }
+        multiProfile = spot.multiProfiles.filter( (multiProfile) =>
+            multiProfile.lang === 'en'
+        )
+        if (multiProfile[0]) { return multiProfile[0] }
+        multiProfile = spot.multiProfiles.filter( (multiProfile) =>
+            multiProfile.lang === 'ja'
+        )
+        if (multiProfile[0]) { return multiProfile[0] }
+        return spot.multiProfiles.slice(-1)[0];
+    }
+
+    const getMajorCategoryID = (spot: SPOT): string => {
+        const majorCategory = spot.profile.majorCategory;
+        for (let i = 0; i < majorCategoryChipItem.length - 1; i++) {
+            if (majorCategoryChipItem[i].key === majorCategory) {
+                return majorCategoryChipItem[i].id
+            }
+        }
+        return 'category.unselected'
+    }
+
+    const selectMultiExhibitByLang = (exhibit: READ_EXHIBIT): MULTI_EXHIBIT => {
+        // select language selected by user at first. if not exists, go on default language en and then finally select ja.
+        let multiExhibit = exhibit.multiExhibits.filter( (multiExhibit) =>
+            multiExhibit.lang === lang
+        )
+        if (multiExhibit[0]) { return multiExhibit[0] }
+        multiExhibit = exhibit.multiExhibits.filter( (multiExhibit) =>
+            multiExhibit.lang === 'en'
+        )
+        if (multiExhibit[0]) { return multiExhibit[0] }
+        multiExhibit = exhibit.multiExhibits.filter( (multiExhibit) =>
+            multiExhibit.lang === 'ja'
+        )
+        if (multiExhibit[0]) { return multiExhibit[0] }
+        return exhibit.multiExhibits.slice(-1)[0];
+    }
+
     const selectExhibitAction = (exhibit: READ_EXHIBIT) => {
         dispatch(selectExhibit(exhibit));
         handleLink('/exhibits/detail');
@@ -173,42 +218,52 @@ const SpotDetail: React.FC = () => {
         const postContent: POST_REVIEW = {...postReview, userId: selectedSpot.id, lang: user.lang}
         const result = await dispatch(fetchAsyncCreateReview(postContent));
         if (fetchAsyncCreateReview.rejected.match(result)) {
-            setMessage({type: "error", message: "レビューの投稿に失敗しました"});
+            setMessage({type: "error", message: intl.formatMessage({ id: "spot.detail.reviewError", defaultMessage: "Failed to post a review" })});
             setSnackOpen(true);
             setOpen(false);
             return false
         }
         if (fetchAsyncCreateReview.fulfilled.match(result)) {
-            setMessage({type: "success", message: "レビューの投稿に成功しました"});
+            setMessage({type: "success", message: intl.formatMessage({ id: "spot.detail.reviewSuccess", defaultMessage: "Successfully post a review" })});
             setSnackOpen(true);
             setOpen(false);
             setPostReview({ postReview: "", rating: 0 });
         }
     }
 
+    const tableContents = [
+        { title: intl.formatMessage({ id: "spot.card.username", defaultMessage: "Username" }), content: selectMultiProfileByLang(selectedSpot).username},
+        { title: intl.formatMessage({ id: "spot.card.address", defaultMessage: "Address" }), content: selectMultiProfileByLang(selectedSpot).addressPrefecture + selectMultiProfileByLang(selectedSpot).addressCity + selectMultiProfileByLang(selectedSpot).addressStreet},
+        { title: intl.formatMessage({ id: "spot.card.entranceFee", defaultMessage: "Entrance fee" }), content: selectMultiProfileByLang(selectedSpot).entranceFee},
+        { title: intl.formatMessage({ id: "spot.card.businessHour", defaultMessage: "Business hour" }), content: selectMultiProfileByLang(selectedSpot).businessHours},
+        { title: intl.formatMessage({ id: "spot.card.holiday", defaultMessage: "Holiday" }), content: selectMultiProfileByLang(selectedSpot).holiday},
+        { title: intl.formatMessage({ id: "spot.card.telephone", defaultMessage: "Telephone" }), content: selectedSpot.profile.telephone},
+        { title: intl.formatMessage({ id: "spot.card.homepage", defaultMessage: "Homepage" }), content: selectedSpot.profile.companySite},
+    ]
+
     return (
         <Container maxWidth="md">
             <Paper className={classes.paper}>
-                <Typography variant="h4" color="textPrimary">{selectedSpot.multiProfiles.slice(-1)[0].username}</Typography>
+                <Typography variant="h4" color="textPrimary">{selectMultiProfileByLang(selectedSpot).username}</Typography>
                 <div className={commonStyles.spacer__small} />
                 <div className={customStyles.spot_subtitle_wrapper}>
-                    <Chip label={`${majorCategoryChipObj[selectedSpot.profile.majorCategory]}`} variant="outlined" size="small"/>
+                    <Chip label={intl.formatMessage({ id: getMajorCategoryID(selectedSpot), defaultMessage: "Unselected" })} variant="outlined" size="small"/>
                     <Rating className={classes.rating} value={selectedSpot.profile.rating} precision={0.5} readOnly />
                     <Typography className={classes.ratingLabel} variant="h6" color="primary">{selectedSpot.profile.rating}</Typography>
                 </div>
-                <Typography variant="body1" color="textSecondary">{selectedSpot.multiProfiles.slice(-1)[0].addressPrefecture + selectedSpot.multiProfiles.slice(-1)[0].addressCity + selectedSpot.multiProfiles.slice(-1)[0].addressStreet}</Typography>
+                <Typography variant="body1" color="textSecondary">{selectMultiProfileByLang(selectedSpot).addressPrefecture + selectMultiProfileByLang(selectedSpot).addressCity + selectMultiProfileByLang(selectedSpot).addressStreet}</Typography>
                 <div className={commonStyles.spacer__small} />
                 <div className={customStyles.spot_detail_avatar_wrapper}>
                     <Avatar variant="rounded" src={selectedSpot.profile.url} className={classes.avatar} alt="logo" />
                 </div>
                 <div className={customStyles.spot_detail_divider} />
                 <div>
-                    <Typography variant="h6" color="textPrimary">紹介文</Typography>
-                    <Typography variant="body1" color="textSecondary">{selectedSpot.multiProfiles.slice(-1)[0].selfIntro}</Typography>
+                    <Typography variant="h6" color="textPrimary"><FormattedMessage id="spot.detail.introduction" defaultMessage="Introduction" /></Typography>
+                    <Typography variant="body1" color="textSecondary">{selectMultiProfileByLang(selectedSpot).selfIntro}</Typography>
                 </div>
                 <div className={customStyles.spot_detail_divider} />
                 <div>
-                    <Typography variant="h6" color="textPrimary">基本情報</Typography>
+                    <Typography variant="h6" color="textPrimary"><FormattedMessage id="spot.detail.basicInfo" defaultMessage="Basic information" /></Typography>
                     <Table>
                         <TableBody>
                             {tableContents.map( (tableContent, index) => (
@@ -225,7 +280,7 @@ const SpotDetail: React.FC = () => {
                 <div className={customStyles.spot_detail_divider} />
                 <div>
                     <div className={customStyles.review_title_wrapper}>
-                        <Typography variant="h6" color="textPrimary">レビュー一覧</Typography>
+                        <Typography variant="h6" color="textPrimary"><FormattedMessage id="spot.detail.review" defaultMessage="Review" /></Typography>
                         <Button
                             variant="contained"
                             color="primary"
@@ -235,13 +290,13 @@ const SpotDetail: React.FC = () => {
                             onClick={ handleOpen }
                             disableElevation
                         >
-                            レビュー投稿
+                            <FormattedMessage id="spot.detail.reviewButton" defaultMessage="New post" />
                         </Button>
                         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                            <DialogTitle id="form-dialog-title" className={classes.dialog}>レビューの新規投稿</DialogTitle>
+                            <DialogTitle id="form-dialog-title" className={classes.dialog}><FormattedMessage id="spot.detail.reviewButton" defaultMessage="New post" /></DialogTitle>
                             <DialogContent>
                                 <DialogContentText>
-                                    評価とレビューを投稿してください
+                                    <FormattedMessage id="spot.detail.postReview" defaultMessage="Let's post your review" />
                                 </DialogContentText>
                                 <div className={commonStyles.spacer__medium} />
                                 <Rating className={classes.rating}
@@ -253,7 +308,7 @@ const SpotDetail: React.FC = () => {
                                 <TextField
                                     variant="outlined"
                                     fullWidth
-                                    label="レビュー"
+                                    label={intl.formatMessage({ id: "spot.detail.review", defaultMessage: "Review" })}
                                     type="text"
                                     name="postReview"
                                     multiline
@@ -264,14 +319,20 @@ const SpotDetail: React.FC = () => {
                                 <div className={commonStyles.spacer__medium} />
                             </DialogContent>
                             <DialogActions>
-                                <Button onClick={handleClose} color="primary">
-                                    キャンセル
+                                <Button
+                                    onClick={handleClose}
+                                    color="primary"
+                                    className={classes.postReviewButton}
+                                >
+                                    <FormattedMessage id="button.cancel" defaultMessage="Cancel" />
                                 </Button>
                                 <Button
                                     onClick={() => createReviewAction()}
-                                    disabled={isDisabled} color="primary"
+                                    disabled={isDisabled}
+                                    color="primary"
+                                    className={classes.postReviewButton}
                                 >
-                                    投稿
+                                    <FormattedMessage id="button.post" defaultMessage="Post" />
                                 </Button>
                             </DialogActions>
                         </Dialog>
@@ -286,13 +347,13 @@ const SpotDetail: React.FC = () => {
                                 <ReviewList />
                             </div>
                         ) : (
-                            <Typography variant="body1" color="textSecondary" className={classes.noReviewContentText}>レビューがありません。</Typography>
+                            <Typography variant="body1" color="textSecondary" className={classes.noReviewContentText}><FormattedMessage id="spot.detail.noReview" defaultMessage="No review" /></Typography>
                         )
                     }
                 </div>
                 <div className={customStyles.spot_detail_divider} />
                 <div>
-                    <Typography variant="h6" color="textPrimary">おすすめスポット</Typography>
+                    <Typography variant="h6" color="textPrimary"><FormattedMessage id="spot.detail.favorite" defaultMessage="Favorite spot" /></Typography>
                     <div className={commonStyles.spacer__small} />
                     <Grid container>
                         {selectedExhibits.map( (exhibit, index) => (
@@ -304,7 +365,7 @@ const SpotDetail: React.FC = () => {
                                     >
                                         <Avatar variant="rounded" src={exhibit.pictures[0].url} className={classes.recommendAvatar} alt="recommendImage" />
                                     </ButtonBase>
-                                    <Typography variant="subtitle1" color="textPrimary" noWrap className={classes.recommendTitle}>{exhibit.multiExhibits.slice(-1)[0].name}</Typography>
+                                    <Typography variant="subtitle1" color="textPrimary" noWrap className={classes.recommendTitle}>{selectMultiExhibitByLang(exhibit).name}</Typography>
                                 </Paper>
                             </Grid>
                         ))}

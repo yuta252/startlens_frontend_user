@@ -1,92 +1,3 @@
-export const majorCategoryObj: {[key:number] : string} = {
-    0: "選択されていません",
-    11: "山岳",
-    12: "高原・湿原・原野",
-    13: "湖沼",
-    14: "河川・渓谷",
-    15: "滝",
-    16: "海岸・岬",
-    17: "岩石・洞窟",
-    18: "動物",
-    19: "植物",
-    20: "自然現象",
-    21: "史跡",
-    22: "神社・寺院・教会",
-    23: "城跡・城郭・宮殿",
-    24: "集落・街",
-    25: "郷土景観",
-    26: "庭園・公園",
-    27: "建造物",
-    28: "年中行事（祭り・伝統行事）",
-    39: "動植物園・水族館",
-    30: "博物館・美術館",
-    31: "テーマ公園・テーマ施設",
-    32: "温泉",
-    33: "食",
-    34: "芸能・イベント"
-};
-
-export const langCategoryObj: {[key: string]: string} = {
-    "ja": "日本語",
-    "en": "英語",
-    "zh-CN": "中国語（簡体字）",
-    "zh-TW": "中国語（繁体字）",
-    "ko": "韓国語"
-}
-
-export const countryCategoryObj: {[key: string]: string[]} = {
-    "tohoku": ["北海道", "青森", "秋田", "岩手", "山形", "宮城", "福島"],
-    "kanto": ["東京", "神奈川", "千葉", "埼玉", "茨城", "栃木", "群馬"],
-    "chubu": ["愛知", "山梨", "長野", "石川", "富山", "福井", "岐阜", "静岡", "三重"],
-    "kansai": ["大阪", "京都", "兵庫", "滋賀", "奈良", "和歌山"],
-    "chuboku": ["広島", "岡山", "島根", "鳥取", "山口", "香川", "愛媛", "徳島", "高知"],
-    "kyusyu": ["福岡", "熊本", "大分", "佐賀", "長崎", "宮崎", "鹿児島", "沖縄"]
-}
-
-export const countryCategoryList: string[] = [
-    "未選択", "北海道", "青森", "秋田", "岩手", "山形", "宮城", "福島",
-    "東京", "神奈川", "千葉", "埼玉", "茨城", "栃木", "群馬",
-    "愛知", "山梨", "長野", "石川", "富山", "福井", "岐阜", "静岡", "三重",
-    "大阪", "京都", "兵庫", "滋賀", "奈良", "和歌山",
-    "広島", "岡山", "島根", "鳥取", "山口", "香川", "愛媛", "徳島", "高知",
-    "福岡", "熊本", "大分", "佐賀", "長崎", "宮崎", "鹿児島", "沖縄"
-]
-
-export const majorCategoryChipObj: {[key:number] : string} = {
-    0: "未選択",
-    11: "山岳",
-    12: "高原・湿原・原野",
-    13: "湖沼",
-    14: "河川・渓谷",
-    15: "滝",
-    16: "海岸・岬",
-    17: "岩石・洞窟",
-    18: "動物",
-    19: "植物",
-    20: "自然現象",
-    21: "史跡",
-    22: "神社・寺院・教会",
-    23: "城跡・城郭・宮殿",
-    24: "集落・街",
-    25: "郷土景観",
-    26: "庭園・公園",
-    27: "建造物",
-    28: "年中行事（祭り・伝統行事）",
-    39: "動植物園・水族館",
-    30: "博物館・美術館",
-    31: "テーマ公園・テーマ施設",
-    32: "温泉",
-    33: "食",
-    34: "芸能・イベント"
-};
-
-export const sexCategoryObj: {[key: number]: string} = {
-    0: "未選択",
-    1: "男性",
-    2: "女性",
-    3: "無回答"
-}
-
 export const birthCategoryObj: {[key: number]: string} = {
     1940: "1940", 1941: "1941", 1942: "1942", 1943: "1943", 1944: "1944",
     1945: "1945", 1946: "1946", 1947: "1947", 1948: "1948", 1949: "1949",
@@ -97,7 +8,7 @@ export const birthCategoryObj: {[key: number]: string} = {
     1970: "1970", 1971: "1971", 1972: "1972", 1973: "1973", 1974: "1974",
     1975: "1975", 1976: "1976", 1977: "1977", 1978: "1978", 1979: "1979",
     1980: "1980", 1981: "1981", 1982: "1982", 1983: "1983", 1984: "1984",
-    1985: "1985", 1986: "1986", 1987: "1987", 1988: "1988", 1989: "1989", 0: "未選択",
+    1985: "1985", 1986: "1986", 1987: "1987", 1988: "1988", 1989: "1989", 0: "-",
     1990: "1990", 1991: "1991", 1992: "1992", 1993: "1993", 1994: "1994",
     1995: "1995", 1996: "1996", 1997: "1997", 1998: "1998", 1999: "1999",
     2000: "2000", 2001: "2001", 2002: "2002", 2003: "2003", 2004: "2004",
@@ -106,7 +17,468 @@ export const birthCategoryObj: {[key: number]: string} = {
     2015: "2015"
 }
 
-export const worldCountryObj: {[key: string]: string} = {
-    "na": "未選択", "JP": "日本", "KR": "韓国", "TW": "台湾", "CN": "中国",
-    "US": "アメリカ", "GB": "イギリス"
-}
+/* multi language  */
+export const majorCategoryChipItem = [
+    {
+        key: 0,
+        id: 'category.unselected',
+        default: 'Unselected'
+    },
+    {
+        key: 11,
+        id: 'category.mountains',
+        default: 'Mountains'
+    },
+    {
+        key: 12,
+        id: 'category.plateau',
+        default: 'Plateau'
+    },
+    {
+        key: 13,
+        id: 'category.lake',
+        default: 'Lake'
+    },
+    {
+        key: 14,
+        id: 'category.river',
+        default: 'River'
+    },
+    {
+        key: 15,
+        id: 'category.waterfall',
+        default: 'Waterfall'
+    },
+    {
+        key: 16,
+        id: 'category.coast',
+        default: 'Coast'
+    },
+    {
+        key: 17,
+        id: 'category.rock',
+        default: 'Rock, Cave'
+    },
+    {
+        key: 18,
+        id: 'category.animal',
+        default: 'Animal'
+    },
+    {
+        key: 19,
+        id: 'category.plant',
+        default: 'Plant'
+    },
+    {
+        key: 20,
+        id: 'category.naturalPhenomenon',
+        default: 'Natural Phenomenon'
+    },
+    {
+        key: 21,
+        id: 'category.historicSite',
+        default: 'Historic site'
+    },
+    {
+        key: 22,
+        id: 'category.religiousBuilding',
+        default: 'Religious building'
+    },
+    {
+        key: 23,
+        id: 'category.castle',
+        default: 'Castle, Palace'
+    },
+    {
+        key: 24,
+        id: 'category.village',
+        default: 'Village, Town'
+    },
+    {
+        key: 25,
+        id: 'category.localLandscape',
+        default: 'Local landscape'
+    },
+    {
+        key: 26,
+        id: 'category.park',
+        default: 'Park'
+    },
+    {
+        key: 27,
+        id: 'category.building',
+        default: 'Building'
+    },
+    {
+        key: 28,
+        id: 'category.annualEvent',
+        default: 'Annual event'
+    },
+    {
+        key: 29,
+        id: 'category.zoo',
+        default: 'Zoo, Aquarium'
+    },
+    {
+        key: 30,
+        id: 'category.museum',
+        default: 'Museum, Art museum'
+    },
+    {
+        key: 31,
+        id: 'category.themePark',
+        default: 'Theme park'
+    },
+    {
+        key: 32,
+        id: 'category.hotSpring',
+        default: 'Hot spring'
+    },
+    {
+        key: 33,
+        id: 'category.food',
+        default: 'Food'
+    },
+    {
+        key: 34,
+        id: 'category.event',
+        default: 'Event'
+    },
+]
+
+export const countryCategoryTohokuItem = [
+    {
+        key: 'Hokkaido',
+        id: 'country.hokkaido',
+        default: 'Hokkaido'
+    },
+    {
+        key: 'Aomori',
+        id: 'country.aomori',
+        default: 'Aomori'
+    },
+    {
+        key: 'Akita',
+        id: 'country.akita',
+        default: 'Akita'
+    },
+    {
+        key: 'Iwate',
+        id: 'country.iwate',
+        default: 'Iwate'
+    },
+    {
+        key: 'Yamagata',
+        id: 'country.yamagata',
+        default: 'Yamagata'
+    },
+    {
+        key: 'Miyagi',
+        id: 'country.miyagi',
+        default: 'Miyagi'
+    },
+    {
+        key: 'Fukushima',
+        id: 'country.fukushima',
+        default: 'Fukushima'
+    }
+]
+
+export const countryCategoryKantoItem = [
+    {
+        key: 'Tokyo',
+        id: 'country.tokyo',
+        default: 'Tokyo'
+    },
+    {
+        key: 'Kanagawa',
+        id: 'country.kanagawa',
+        default: 'Kanagawa'
+    },
+    {
+        key: 'Chiba',
+        id: 'country.chiba',
+        default: 'Chiba'
+    },
+    {
+        key: 'Saitama',
+        id: 'country.saitama',
+        default: 'Saitama'
+    },
+    {
+        key: 'Ibaraki',
+        id: 'country.ibaraki',
+        default: 'Ibaraki'
+    },
+    {
+        key: 'Tochigi',
+        id: 'country.tochigi',
+        default: 'Tochigi'
+    },
+    {
+        key: 'Gunma',
+        id: 'country.gunma',
+        default: 'Gunma'
+    }
+]
+
+export const countryCategoryChubuItem = [
+    {
+        key: 'Aichi',
+        id: 'country.aichi',
+        default: 'Aichi'
+    },
+    {
+        key: 'Yamanashi',
+        id: 'country.yamanashi',
+        default: 'Yamanashi'
+    },
+    {
+        key: 'Nagano',
+        id: 'country.nagano',
+        default: 'Nagano'
+    },
+    {
+        key: 'Ishikawa',
+        id: 'country.ishikawa',
+        default: 'Ishikawa'
+    },
+    {
+        key: 'Toyama',
+        id: 'country.toyama',
+        default: 'Toyama'
+    },
+    {
+        key: 'Fukui',
+        id: 'country.fukui',
+        default: 'Fukui'
+    },
+    {
+        key: 'Gifu',
+        id: 'country.gifu',
+        default: 'Gifu'
+    },
+    {
+        key: 'Shizuoka',
+        id: 'country.shizuoka',
+        default: 'Shizuoka'
+    },
+    {
+        key: 'Mie',
+        id: 'country.mie',
+        default: 'Mie'
+    }
+]
+
+export const countryCategoryKansaiItem = [
+    {
+        key: 'Osaka',
+        id: 'country.osaka',
+        default: 'Osaka'
+    },
+    {
+        key: 'Kyoto',
+        id: 'country.kyoto',
+        default: 'Kyoto'
+    },
+    {
+        key: 'Hyogo',
+        id: 'country.hyogo',
+        default: 'Hyogo'
+    },
+    {
+        key: 'Shiga',
+        id: 'country.shiga',
+        default: 'Shiga'
+    },
+    {
+        key: 'Nara',
+        id: 'country.nara',
+        default: 'Nara'
+    },
+    {
+        key: 'Wakayama',
+        id: 'country.wakayama',
+        default: 'Wakayama'
+    },
+]
+
+export const countryCategoryChugokuItem = [
+    {
+        key: 'Hiroshima',
+        id: 'country.hiroshima',
+        default: 'Hiroshima'
+    },
+    {
+        key: 'Okayama',
+        id: 'country.okayama',
+        default: 'Okayama'
+    },
+    {
+        key: 'Shimane',
+        id: 'country.shimane',
+        default: 'Shimane'
+    },
+    {
+        key: 'Tottori',
+        id: 'country.tottori',
+        default: 'Tottori'
+    },
+    {
+        key: 'Yamaguchi',
+        id: 'country.yamaguchi',
+        default: 'Yamaguchi'
+    },
+    {
+        key: 'Kagawa',
+        id: 'country.kagawa',
+        default: 'Kagawa'
+    },
+    {
+        key: 'Ehime',
+        id: 'country.ehime',
+        default: 'Ehime'
+    },
+    {
+        key: 'Tokushima',
+        id: 'country.tokushima',
+        default: 'Tokushima'
+    },
+    {
+        key: 'Kochi',
+        id: 'country.kochi',
+        default: 'Kochi'
+    },
+]
+
+export const countryCategoryKyusyuItem = [
+    {
+        key: 'Fukuoka',
+        id: 'country.fukuoka',
+        default: 'Fukuoka'
+    },
+    {
+        key: 'Kumamoto',
+        id: 'country.kumamoto',
+        default: 'Kumamoto'
+    },
+    {
+        key: 'Oita',
+        id: 'country.oita',
+        default: 'Oita'
+    },
+    {
+        key: 'Saga',
+        id: 'country.saga',
+        default: 'saga'
+    },
+    {
+        key: 'Nagasaki',
+        id: 'country.nagasaki',
+        default: 'Nagasaki'
+    },
+    {
+        key: 'Miyazaki',
+        id: 'country.miyazaki',
+        default: 'Miyazaki'
+    },
+    {
+        key: 'Kagoshima',
+        id: 'country.kagoshima',
+        default: 'Kagoshima'
+    },
+    {
+        key: 'Okinawa',
+        id: 'country.okinawa',
+        default: 'Okinawa'
+    },
+]
+
+export const langItem = [
+    {
+        key: 'ja',
+        id: 'language.japanese',
+        default: 'Japanese'
+    },
+    {
+        key: 'en',
+        id: 'language.english',
+        default: 'English'
+    },
+    {
+        key: 'zh-CN',
+        id: 'language.chineseCN',
+        default: 'Simplified Chinese'
+    },
+    {
+        key: 'zh-TW',
+        id: 'language.chineseTW',
+        default: 'Traditional Chinese'
+    },
+    {
+        key: 'ko',
+        id: 'language.korean',
+        default: 'Korean'
+    },
+]
+
+export const sexItem = [
+    {
+        key: 0,
+        id: 'sex.unselected',
+        default: 'Unselected'
+    },
+    {
+        key: 1,
+        id: 'sex.male',
+        default: 'Male'
+    },
+    {
+        key: 2,
+        id: 'sex.female',
+        default: 'Female'
+    },
+    {
+        key: 3,
+        id: 'sex.noAnswer',
+        default: 'No answer'
+    },
+]
+
+export const worldItem = [
+    {
+        key: "na",
+        id: 'world.unselected',
+        default: 'Unselected'
+    },
+    {
+        key: "JP",
+        id: 'world.japan',
+        default: 'Japan'
+    },
+    {
+        key: "KR",
+        id: 'world.korea',
+        default: 'Korea'
+    },
+    {
+        key: "TW",
+        id: 'world.taiwan',
+        default: 'Taiwan'
+    },
+    {
+        key: "CN",
+        id: 'world.chinese',
+        default: 'Chinese'
+    },
+    {
+        key: "US",
+        id: 'world.america',
+        default: 'US'
+    },
+    {
+        key: "GB",
+        id: 'world.england',
+        default: 'UK'
+    },
+]

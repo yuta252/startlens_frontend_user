@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import {
     Button,
     Container,
@@ -20,9 +22,18 @@ import { makeStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { AppDispatch } from '../../../app/store';
 import {
     fetchAsyncGetSpots,
-    selectParams
+    selectParams,
+    selectSpots
 } from './spotSlice';
-import { countryCategoryList, majorCategoryChipObj } from '../../../app/constant';
+import {
+    countryCategoryChubuItem,
+    countryCategoryChugokuItem,
+    countryCategoryKansaiItem,
+    countryCategoryKantoItem,
+    countryCategoryKyusyuItem,
+    countryCategoryTohokuItem,
+    majorCategoryChipItem,
+} from '../../../app/constant';
 import SpotCard from './SpotCard';
 import customStyles from './Top.module.css';
 
@@ -51,6 +62,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         width: '80px',
         marginLeft: '8px',
         flexGrow: 1,
+        textTransform: 'none',
     },
     pagination: {
         display: 'inline-block',
@@ -65,16 +77,24 @@ const Pagination = withStyles({
 
 
 const SpotSearch: React.FC = () => {
+    const intl = useIntl();
     const classes = useStyles();
     const dispatch: AppDispatch = useDispatch();
 
     const selectedParams = useSelector(selectParams);
+    const spots = useSelector(selectSpots);
+
+    const countryCategoryItem = [
+        {key: 'Unselected', id: 'category.unselected', default: 'Unselected'},
+        ...countryCategoryTohokuItem, ...countryCategoryKantoItem,
+        ...countryCategoryChubuItem, ...countryCategoryKansaiItem,
+        ...countryCategoryChugokuItem, ...countryCategoryKyusyuItem
+    ]
 
     const [params, setParams] = useState({query: selectedParams.query, category: selectedParams.category, prefecture: selectedParams.prefecture, page: selectedParams.page});
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
-        const name = e.target.value;
         setParams({...params, query: value});
     };
 
@@ -85,18 +105,22 @@ const SpotSearch: React.FC = () => {
 
     const handleSelectAddressChange = (e: React.ChangeEvent< {value: unknown} >) => {
         const value = e.target.value as string;
-        setParams({...params, prefecture: value})
+        if (value === intl.formatMessage({ id: "category.unselected", defaultMessage: "Unselected" })) {
+            setParams({...params, prefecture: ""})
+        } else {
+            setParams({...params, prefecture: value})
+        }
     };
 
-    let categoryOptions = Object.keys(majorCategoryChipObj).map( (key) => (
-        <MenuItem key={key} value={Number(key)}>
-            {majorCategoryChipObj[Number(key)]}
+    let categoryOptions = majorCategoryChipItem.map( (item) => (
+        <MenuItem key={item.key} value={Number(item.key)}>
+            {intl.formatMessage({ id: item.id, defaultMessage: item.default })}
         </MenuItem>
     ));
 
-    let addressOptions = countryCategoryList.map( (country) => (
-        <MenuItem key={country} value={country}>
-            {country}
+    let addressOptions = countryCategoryItem.map( (item) => (
+        <MenuItem key={item.key} value={intl.formatMessage({ id: item.id, defaultMessage: item.default })}>
+            {intl.formatMessage({ id: item.id, defaultMessage: item.default })}
         </MenuItem>
     ));
 
@@ -124,26 +148,26 @@ const SpotSearch: React.FC = () => {
                     </Grid>
                     <Grid item xs={12} md={6} className={classes.searchContent}>
                         <FormControl variant="outlined" className={classes.formControl}>
-                            <InputLabel id="address-select-label">場所</InputLabel>
+                            <InputLabel id="address-select-label"><FormattedMessage id="search.form.location" defaultMessage="Location" /></InputLabel>
                             <Select
                                 labelId="address-select-label"
                                 name="prefecture"
-                                value={params.prefecture ?　params.prefecture : countryCategoryList[0]}
+                                value={params.prefecture ?　params.prefecture : intl.formatMessage({ id: 'category.unselected', defaultMessage: "Unselected" }) }
                                 onChange={handleSelectAddressChange}
-                                label="場所"
+                                label={intl.formatMessage({ id: "search.form.location", defaultMessage: "Location" })}
                             >
                                 {addressOptions}
                             </Select>
                         </FormControl>
                         <FormControl variant="outlined" className={classes.formControl}>
-                            <InputLabel id="category-select-label">カテゴリー</InputLabel>
+                            <InputLabel id="category-select-label"><FormattedMessage id="search.form.category" defaultMessage="Category" /></InputLabel>
                             <Select
                                 labelId="category-select-label"
                                 name="category"
                                 value={params.category}
                                 defaultValue={0}
                                 onChange={handleSelectCategoryChange}
-                                label="カテゴリー"
+                                label={intl.formatMessage({ id: "search.form.category", defaultMessage: "Category" })}
                             >
                                 {categoryOptions}
                             </Select>
@@ -155,23 +179,31 @@ const SpotSearch: React.FC = () => {
                             onClick={searchAction}
                             disableElevation
                         >
-                            検索
+                            <FormattedMessage id="top.searchButton" defaultMessage="Search" />
                         </Button>
                     </Grid>
                 </Grid>
-                <Typography variant="h6">検索結果</Typography>
-                <div className={customStyles.new_spot_wrapper}>
-                    <SpotCard />
-                </div>
-                <div className={customStyles.search_pagination_wrapper}>
-                    <Pagination
-                        className={classes.pagination}
-                        count={selectedParams.last}
-                        color="primary"
-                        onChange={(e, page) => getSpotsPaginated(page)}
-                        page={params.page}
-                    />
-                </div>
+                <Typography variant="h6"><FormattedMessage id="search.result.title" defaultMessage="Search result" /></Typography>
+                {spots.length ? (
+                    <div>
+                        <div className={customStyles.new_spot_wrapper}>
+                            <SpotCard />
+                        </div>
+                        <div className={customStyles.search_pagination_wrapper}>
+                            <Pagination
+                                className={classes.pagination}
+                                count={selectedParams.last}
+                                color="primary"
+                                onChange={(e, page) => getSpotsPaginated(page)}
+                                page={params.page}
+                            />
+                        </div>
+                    </div>
+                ) : (
+                    <div className={customStyles.search_no_result_wrapper}>
+                        <Typography variant="subtitle1"><FormattedMessage id="search.noResult" defaultMessage="No search result. Try it again." /></Typography>
+                    </div>
+                )}
             </div>
         </Container>
     )

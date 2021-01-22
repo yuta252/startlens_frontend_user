@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from "react-redux";
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 import {
@@ -55,10 +56,12 @@ const useStyles = makeStyles((theme: Theme) => ({
         margin: theme.spacing(1,1.5),
         color: "white",
         fontWeight: theme.typography.fontWeightBold,
+        textTransform: 'none',
     },
     signUpButton: {
         margin: theme.spacing(1,1.5),
         fontWeight: theme.typography.fontWeightBold,
+        textTransform: 'none',
     },
 }));
 
@@ -114,6 +117,7 @@ const StyledMenu = withStyles({
 
 
 const Header: React.FC = () => {
+    const intl = useIntl();
     const classes = useStyles();
     const history = useHistory();
     const handleLink = (path: string) => history.push(path);
@@ -161,7 +165,7 @@ const Header: React.FC = () => {
                         <div className={customStyles.header_favorites_button} onClick={moveToFavorites}>
                             <IconButton>
                                 <Badge badgeContent={favorites ? favorites.length : 0}
-                                    color="primary" showZero max={100} 
+                                    color="primary" showZero max={100}
                                     anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
                                 >
                                     <ThumbUpIcon />
@@ -201,13 +205,13 @@ const Header: React.FC = () => {
                                 <ListItemIcon>
                                     <PersonIcon fontSize="small" />
                                 </ListItemIcon>
-                                <ListItemText primary="プロフィール" />
+                                <ListItemText primary={intl.formatMessage({ id: 'header.profile', defaultMessage: "Profile" })} />
                             </MenuItem>
                             <MenuItem onClick={logout}>
                                 <ListItemIcon>
                                     <ExitToAppIcon fontSize="small" />
                                 </ListItemIcon>
-                                <ListItemText primary="ログアウト" />
+                                <ListItemText primary={intl.formatMessage({ id: 'header.logout', defaultMessage: "Logout" })} />
                             </MenuItem>
                         </StyledMenu>
                     </div>
@@ -215,14 +219,14 @@ const Header: React.FC = () => {
                     <div className={customStyles.header_button_wrapper}>
                         <nav>
                             <Link variant="button" href="#" color="textPrimary" className={classes.link}>
-                                Startlensとは
+                                <FormattedMessage id="header.about" defaultMessage="What's Startlens" />
                             </Link>
                         </nav>
                         <Button href="./signup" color="primary" variant="outlined" className={classes.signUpButton} disableElevation>
-                            新規登録
+                            <FormattedMessage id="header.signUp" defaultMessage="Sign up" />
                         </Button>
                         <Button href="./signin" color="primary" variant="contained" className={classes.button} disableElevation>
-                            ログイン
+                            <FormattedMessage id="header.signIn" defaultMessage="Sign in" />
                         </Button>
                     </div>
                 )}
