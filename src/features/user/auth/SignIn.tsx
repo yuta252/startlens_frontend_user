@@ -160,7 +160,7 @@ const SignIn: React.FC = () => {
                     </Button>
                     <Alert severity="info" className={classes.snackbar}>
                         <AlertTitle><FormattedMessage id="signIn.demoAccount" defaultMessage="Demo account" /></AlertTitle>
-                        Email:<strong>info@startlens.com</strong>, Password: <strong>startlens</strong>
+                        Email:<strong>test@startlens.com</strong>, Password: <strong>startlens</strong>
                     </Alert>
                     <div className={commonStyles.divider__small} />
                     <Link href="./signup" variant="body2" color="secondary">

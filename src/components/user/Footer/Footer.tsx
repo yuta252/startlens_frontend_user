@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import {
@@ -40,7 +40,7 @@ const Footer: React.FC = () => {
             description: [
                 {
                     title: intl.formatMessage({ id: "header.about", defaultMessage: "What's Startlens?" }),
-                    link: "./about"
+                    link: "/about"
                 },
             ]
         },
@@ -49,11 +49,11 @@ const Footer: React.FC = () => {
             description: [
                 {
                     title: intl.formatMessage({ id: "footer.topPage", defaultMessage: "Top page" }),
-                    link: "./"
+                    link: "/"
                 },
                 {
                     title: intl.formatMessage({ id: "footer.myPage", defaultMessage: "My page" }),
-                    link: "./profile/edit"
+                    link: "/profile/edit"
                 },
                 {
                     title: intl.formatMessage({ id: "footer.admin", defaultMessage: "Admin page" }),
