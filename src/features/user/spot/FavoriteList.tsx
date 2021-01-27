@@ -150,7 +150,7 @@ const FavoriteList: React.FC = () => {
                                             <Rating className={classes.rating} value={spot.profile.rating} precision={0.5} readOnly />
                                             <Typography className={classes.ratingLabel} variant="h6" color="primary">{spot.profile.rating}</Typography>
                                         </div>
-                                        <Typography variant="body1" color="textSecondary">{selectMultiProfileByLang(spot).addressPrefecture + selectMultiProfileByLang(spot).addressCity + selectMultiProfileByLang(spot).addressStreet}</Typography>
+                                        <Typography variant="body1" color="textSecondary">{selectMultiProfileByLang(spot).addressPrefecture + ' ' + selectMultiProfileByLang(spot).addressCity + selectMultiProfileByLang(spot).addressStreet}</Typography>
                                         <div>
                                             <table>
                                                 <tbody>
