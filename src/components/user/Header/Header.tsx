@@ -50,7 +50,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         textDecoration: 'none',
     },
     link: {
-        margin: theme.spacing(1,1.5)
+        margin: theme.spacing(1,1.5),
+        textTransform: 'none',
     },
     button: {
         margin: theme.spacing(1,1.5),
@@ -218,8 +219,11 @@ const Header: React.FC = () => {
                 ) : (
                     <div className={customStyles.header_button_wrapper}>
                         <nav>
-                            <Link variant="button" href="#" color="textPrimary" className={classes.link}>
-                                <FormattedMessage id="header.about" defaultMessage="What's Startlens" />
+                            <Link variant="button" href={process.env.REACT_APP_ADMIN_URL} color="textPrimary" className={classes.link}>
+                                <FormattedMessage id="header.admin" defaultMessage="Admin page" />
+                            </Link>
+                            <Link variant="button" href="./about" color="textPrimary" className={classes.link}>
+                                <FormattedMessage id="header.about" defaultMessage="What is Startlens" />
                             </Link>
                         </nav>
                         <Button href="./signup" color="primary" variant="outlined" className={classes.signUpButton} disableElevation>

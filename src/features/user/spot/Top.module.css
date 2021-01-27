@@ -122,10 +122,6 @@
     justify-content: space-between;
 }
 
-.about_page_wrapper {
-    padding: 32px;
-}
-
 .favorite_no_content_wrapper {
     display: flex;
     justify-self: center;

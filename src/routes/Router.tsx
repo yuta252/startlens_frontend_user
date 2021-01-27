@@ -6,7 +6,7 @@ import UserSignUp from '../features/user/auth/SignUp';
 import Profile from '../features/user/auth/Profile';
 import ProfileEdit from '../features/user/auth/ProfileEdit';
 import Top from '../features/user/spot/Top';
-import About from '../features/user/spot/About';
+import About from '../components/user/About/About';
 import SpotDetail from '../features/user/spot/SpotDetail';
 import SpotSearch from '../features/user/spot/SpotSearch';
 import ExhibitDetail from '../features/user/exhibit/ExhibitDetail';

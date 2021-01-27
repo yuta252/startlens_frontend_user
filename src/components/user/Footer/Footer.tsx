@@ -1,4 +1,5 @@
 import React from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import {
@@ -29,19 +30,38 @@ const useStyles = makeStyles( (theme: Theme) => ({
 }))
 
 
-const footers = [
-    {
-        title: "Startlens",
-        description: ["Startlensとは", "お問い合わせ先", "利用規約", "プライベートポリシー"]
-    },
-    {
-        title: "サイトマップ",
-        description: ["トップ画面", "マイページ"]
-    }
-]
-
 const Footer: React.FC = () => {
+    const intl = useIntl();
     const classes = useStyles()
+
+    const footers = [
+        {
+            title: "Startlens",
+            description: [
+                {
+                    title: intl.formatMessage({ id: "header.about", defaultMessage: "What's Startlens?" }),
+                    link: "./about"
+                },
+            ]
+        },
+        {
+            title: intl.formatMessage({ id: "footer.sitemap", defaultMessage: "Site map" }),
+            description: [
+                {
+                    title: intl.formatMessage({ id: "footer.topPage", defaultMessage: "Top page" }),
+                    link: "./"
+                },
+                {
+                    title: intl.formatMessage({ id: "footer.myPage", defaultMessage: "My page" }),
+                    link: "./profile/edit"
+                },
+                {
+                    title: intl.formatMessage({ id: "footer.admin", defaultMessage: "Admin page" }),
+                    link: `${process.env.REACT_APP_ADMIN_URL}`
+                },
+            ]
+        },
+    ]
 
     return (
         <div className={customStyles.footer_wrapper}>
@@ -53,10 +73,10 @@ const Footer: React.FC = () => {
                                 {footer.title}
                             </Typography>
                             <ul className={customStyles.footer_list_item}>
-                                {footer.description.map( (item) => (
-                                    <li key={item}>
-                                        <Link href="#" variant="subtitle2" className={classes.textSub}>
-                                            {item}
+                                {footer.description.map( (item, index) => (
+                                    <li key={index}>
+                                        <Link href={item.link} variant="subtitle2" className={classes.textSub}>
+                                            {item.title}
                                         </Link>
                                     </li>
                                 ))}
