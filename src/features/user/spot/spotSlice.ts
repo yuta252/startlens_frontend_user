@@ -384,12 +384,18 @@ export const spotSlice = createSlice({
             state.spots = state.spots.map( (spot) =>
                 spot.id === action.payload.id ? { ...spot, isFavorite: true } : spot
             )
+            state.newSpots = state.newSpots.map( (spot) =>
+                spot.id === action.payload.id ? { ...spot, isFavorite: true } : spot
+            )
             state.favorites = state.favorites.map( (spot) =>
                 spot.id === action.payload.id ? { ...spot, isFavorite: true } : spot
             )
         },
         offFavorite(state, action: PayloadAction<SPOT>) {
             state.spots = state.spots.map( (spot) =>
+                spot.id === action.payload.id ? { ...spot, isFavorite: false } : spot
+            )
+            state.newSpots = state.newSpots.map( (spot) =>
                 spot.id === action.payload.id ? { ...spot, isFavorite: false } : spot
             )
             state.favorites = state.favorites.map( (spot) =>

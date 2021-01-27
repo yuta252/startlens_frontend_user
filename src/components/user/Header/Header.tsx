@@ -222,14 +222,14 @@ const Header: React.FC = () => {
                             <Link variant="button" href={process.env.REACT_APP_ADMIN_URL} color="textPrimary" className={classes.link}>
                                 <FormattedMessage id="header.admin" defaultMessage="Admin page" />
                             </Link>
-                            <Link variant="button" href="./about" color="textPrimary" className={classes.link}>
+                            <Link variant="button" href="/about" color="textPrimary" className={classes.link}>
                                 <FormattedMessage id="header.about" defaultMessage="What is Startlens" />
                             </Link>
                         </nav>
-                        <Button href="./signup" color="primary" variant="outlined" className={classes.signUpButton} disableElevation>
+                        <Button href="/signup" color="primary" variant="outlined" className={classes.signUpButton} disableElevation>
                             <FormattedMessage id="header.signUp" defaultMessage="Sign up" />
                         </Button>
-                        <Button href="./signin" color="primary" variant="contained" className={classes.button} disableElevation>
+                        <Button href="/signin" color="primary" variant="contained" className={classes.button} disableElevation>
                             <FormattedMessage id="header.signIn" defaultMessage="Sign in" />
                         </Button>
                     </div>

@@ -1,6 +1,6 @@
 import React from 'react';
-import { useHistory, Link } from 'react-router-dom';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useHistory } from 'react-router-dom';
+import { FormattedMessage } from 'react-intl';
 
 import { makeStyles, Theme } from "@material-ui/core/styles";
 
@@ -93,7 +93,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const About: React.FC = () => {
-    const intl = useIntl();
     const classes = useStyles();
 
     const history = useHistory();
@@ -101,10 +100,6 @@ const About: React.FC = () => {
 
     const moveToTopAction = () => {
         handleLink('/');
-    }
-
-    const moveToAdminAction = () => {
-        handleLink(`${process.env.REACT_APP_ADMIN_URL}`);
     }
 
     return (
