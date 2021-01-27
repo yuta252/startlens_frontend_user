@@ -23,7 +23,7 @@ import { AppDispatch } from '../../../app/store';
 import {
     fetchAsyncGetSpots
 } from './spotSlice';
-import SpotCard from './SpotCard';
+import SpotNewCard from './SpotNewCard';
 import {
     countryCategoryChubuItem,
     countryCategoryChugokuItem,
@@ -408,7 +408,7 @@ const Top: React.FC = () => {
                 <div className={customStyles.category_content_wrapper}>
                     <Typography variant="h6"><FormattedMessage id="newInfo.title" defaultMessage="New Information" /></Typography>
                     <div className={customStyles.new_spot_wrapper}>
-                        <SpotCard />
+                        <SpotNewCard />
                     </div>
                 </div>
             </Container>
