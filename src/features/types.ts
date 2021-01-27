@@ -147,6 +147,7 @@ export interface SPOT_PAGINATE_INDEX {
 export interface SPOT_STATE {
     error: ERROR;
     spots: SPOT[];
+    newSpots: SPOT[];
     params: SPOT_SEARCH_PARAMS;
     selectSpot: SPOT;
     favorites: SPOT[];

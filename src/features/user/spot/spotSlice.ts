@@ -34,7 +34,6 @@ export const fetchAsyncGetSpots = createAsyncThunk(
             }
         });
 
-        console.log("request url is sent.", requestUrl);
         const res = await axios.get<SPOT_PAGINATE_INDEX>(
             `${requestUrl}`,
             {
@@ -44,7 +43,22 @@ export const fetchAsyncGetSpots = createAsyncThunk(
                 },
             }
         );
-        console.log("res.data", res.data)
+        return res.data;
+    }
+);
+
+export const fetchAsyncGetNewSpots = createAsyncThunk(
+    "spot/getNewSpots",
+    async (count: Number) => {
+        const res = await axios.get<SPOT_PAGINATE_INDEX>(
+            `${process.env.REACT_APP_API_URL}/api/v1/tourist/spots?items=${count}`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `${localStorage.startlensJWT}`,
+                },
+            }
+        );
         return res.data;
     }
 );
@@ -153,6 +167,55 @@ const initialState: SPOT_STATE = {
         message: ""
     },
     spots: [
+        {
+            id: 0,
+            isFavorite: false,
+            profile: {
+                id: 0,
+                userId: 0,
+                majorCategory: 0,
+                telephone: "",
+                companySite: "",
+                url: "",
+                rating: 0.0,
+                ratingCount: 0,
+                latitude: null,
+                longitude: null,
+            },
+            multiProfiles: [
+                {
+                    id: 0,
+                    userId: 0,
+                    lang: "",
+                    username: "",
+                    selfIntro: "",
+                    addressPrefecture: "",
+                    addressCity: "",
+                    addressStreet: "",
+                    entranceFee: "",
+                    businessHours: "",
+                    holiday: ""
+                }
+            ],
+            reviews: [
+                {
+                    id: 0,
+                    userId: 0,
+                    touristId: 0,
+                    lang: "",
+                    postReview: "",
+                    rating: 0.0,
+                    createdAt: "",
+                    tourist: {
+                        id: 0,
+                        username: "",
+                        thumbnailUrl: ""
+                    },
+                }
+            ]
+        }
+    ],
+    newSpots: [
         {
             id: 0,
             isFavorite: false,
@@ -348,6 +411,18 @@ export const spotSlice = createSlice({
             }
         );
         builder.addCase(
+            fetchAsyncGetNewSpots.fulfilled,
+            (state, action: PayloadAction<SPOT_PAGINATE_INDEX>) => {
+                const data: SPOT[] = action.payload.data;
+                const meta = action.payload.meta;
+                return {
+                    ...state,
+                    newSpots: data,
+                    params: meta.params
+                };
+            }
+        );
+        builder.addCase(
             fetchAsyncCreateReview.fulfilled,
             (state, action: PayloadAction<REVIEW>) => {
                 return {
@@ -415,6 +490,7 @@ export const { offFavorite, onFavorite, selectSpot, showError } = spotSlice.acti
 
 export const selectError = (state: RootState) => state.spot.error;
 export const selectSpots = (state: RootState) => state.spot.spots;
+export const selectNewSpots = (state: RootState) => state.spot.newSpots;
 export const selectParams = (state: RootState) => state.spot.params;
 export const selectSelectedSpot = (state: RootState) => state.spot.selectSpot;
 export const selectFavorites = (state: RootState) => state.spot.favorites;
