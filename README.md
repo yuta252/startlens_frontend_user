@@ -8,8 +8,8 @@
 ## サイト概要
 
 観光地の情報を検索して写真の閲覧やレビュー評価を投稿できるサイトです。
-[バックエンドAPIレポジトリ](https://github.com/yuta252/startlens_web_backend)
-[管理者側ページレポジトリ](https://github.com/yuta252/startlens_react_frontend)
+ - [バックエンドAPIレポジトリ](https://github.com/yuta252/startlens_web_backend)
+ - [管理者側ページレポジトリ](https://github.com/yuta252/startlens_react_frontend)
 
 ## 技術選定
 
@@ -23,12 +23,21 @@
 - 複数の検索条件（観光事業者名、場所、カテゴリー、表示数）のクエリを生成し検索
 - react-intlを利用したi18n国際化対応（※現時点で日本語と英語のみ対応）
 - JWTトークンによる認証機能
-- GoogleMapAPIによる位置情報のマップ表示
+- google-map-reactによる位置情報のGoogleMap表示
 - お気に入り登録
 - レビュー、評価の投稿
 - 観光のページ訪問時のログ収集とサーバーへの非同期通信
 - ユーザーサムネイル画像のリサイズとBase64エンコーディングし画像をS3へアップロード
 
+## 外部API
+
+- [Railsバックエンド](https://github.com/yuta252/startlens_web_backend)
+
+  観光事業者が登録した観光地情報の取得及び認証ユーザーの情報を処理するためのAPIサーバー
+  
+- [Google Map API](https://cloud.google.com/maps-platform?hl=ja)
+
+  観光地の位置情報から観光地のマップを描画するために使用
 
 ## 使用素材
 
