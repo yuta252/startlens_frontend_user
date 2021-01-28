@@ -472,9 +472,12 @@ export const spotSlice = createSlice({
         builder.addCase(
             fetchAsyncCreateFavorite.fulfilled,
             (state, action: PayloadAction<FAVORITE>) => {
+                // remove duplicated spot between search spots and new spots
+                const spot: SPOT[] = state.spots.filter( (spot) => spot.id === action.payload.userId)
+                const uniqueSpot: SPOT[] = spot.length === 0 ? state.newSpots.filter( (newSpot) => newSpot.id === action.payload.userId) : spot
                 return {
                     ...state,
-                    favorites: [...state.spots.filter( (spot) => spot.id === action.payload.userId), ...state.favorites]
+                    favorites: [...uniqueSpot, ...state.favorites]
                 };
             }
         );
